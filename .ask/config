@@ -1,0 +1,33 @@
+{
+  "deploy_settings": {
+    "default": {
+      "skill_id": "amzn1.ask.skill.940b2445-2888-4c66-93ff-0ff3f2bfea40",
+      "was_cloned": false,
+      "merge": {},
+      "resources": {
+        "manifest": {
+          "eTag": "e0a160fdbc2954e2c9291af79fc1d4a6"
+        },
+        "interactionModel": {
+          "en-US": {
+            "eTag": "ee5f29aa02122e535c8f2d0a75d5f9bb"
+          }
+        },
+        "lambda": [
+          {
+            "alexaUsage": [
+              "custom/default"
+            ],
+            "arn": "arn:aws:lambda:us-east-1:355616316027:function:fact-skill",
+            "awsRegion": "us-east-1",
+            "codeUri": "lambda/us-east-1_fact-skill",
+            "functionName": "fact-skill",
+            "handler": "index.handler",
+            "revisionId": "56844f7d-f328-4b0f-8019-2352265a35b5",
+            "runtime": "nodejs6.10"
+          }
+        ]
+      }
+    }
+  }
+}
