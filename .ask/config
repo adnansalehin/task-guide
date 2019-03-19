@@ -10,7 +10,7 @@
         },
         "interactionModel": {
           "en-US": {
-            "eTag": "52edb4c8f4c12e4ede453f59116a1329"
+            "eTag": "85c6196ca7f1b4e9bee8c36eac66be38"
           }
         },
         "lambda": [
@@ -23,8 +23,8 @@
             "codeUri": "lambda/us-east-1_fact-skill",
             "functionName": "fact-skill",
             "handler": "index.handler",
-            "revisionId": "a43ca862-e389-49f2-850d-c246a4625afc",
-            "runtime": "nodejs6.10"
+            "revisionId": "6783da07-e89d-4fac-adc8-8a1da63a3a42",
+            "runtime": "nodejs8.10"
           }
         ]
       }

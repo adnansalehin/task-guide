@@ -38,100 +38,205 @@
         {
           "name": "AddMovieIntent",
           "slots": [
-              {
-                  "name": "MovieName",
-                  "type": "AMAZON.Movie",
-                  "samples": [
-                      "{MovieName}"
-                  ]
-              }
+            {
+              "name": "MovieName",
+              "type": "AMAZON.Movie",
+              "samples": [
+                "{MovieName}"
+              ]
+            }
           ],
           "samples": [
-              "add {MovieName}",
-              "add"
+            "add a movie {MovieName}",
+            "add movie",
+            "add a movie",
+            "add movie {MovieName}"
           ]
         },
         {
-            "name": "GetMoviesIntent",
-            "slots": [],
-            "samples": [
-                "get my movies"
-            ]
+          "name": "GetMoviesIntent",
+          "slots": [],
+          "samples": [
+            "what are my favourite movies",
+            "get my movies"
+          ]
         },
         {
-            "name": "RemoveMovieIntent",
-            "slots": [
-                {
-                    "name": "MovieName",
-                    "type": "AMAZON.Movie",
-                    "samples": [
-                        "{MovieName}"
-                    ]
-                }
-            ],
-            "samples": [
-                "remove {MovieName}",
-                "remove"
-            ]
+          "name": "RemoveMovieIntent",
+          "slots": [
+            {
+              "name": "MovieName",
+              "type": "AMAZON.Movie",
+              "samples": [
+                "{MovieName}"
+              ]
+            }
+          ],
+          "samples": [
+            "remove movie {MovieName}"
+          ]
+        },
+        {
+          "name": "AddMemoryIntent",
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion"
+            },
+            {
+              "name": "MemoryAnswer",
+              "type": "MemoryAnswer"
+            }
+          ],
+          "samples": [
+            "add memory title {MemoryQuestion}",
+            "add memory answer {MemoryAnswer}",
+            "add memory {MemoryQuestion}",
+            "add memory",
+            "add memory {MemoryQuestion} and answer {MemoryAnswer}",
+            "add memory with question {MemoryQuestion} and with answer {MemoryAnswer}",
+            "add memory question {MemoryQuestion} and answer {MemoryAnswer}",
+            "add memory {MemoryQuestion} with answer {MemoryAnswer}"
+          ]
         }
       ],
-      "types": []
+      "types": [
+        {
+          "values": [
+            {
+              "name": {
+                "value": "What is my name?"
+              }
+            }
+          ],
+          "name": "MemoryQuestion"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "Adnan"
+              }
+            }
+          ],
+          "name": "MemoryAnswer"
+        }
+      ]
     },
     "dialog": {
       "intents": [
-          {
-              "name": "AddMovieIntent",
-              "confirmationRequired": false,
-              "prompts": {},
-              "slots": [
-                  {
-                      "name": "MovieName",
-                      "type": "AMAZON.Movie",
-                      "confirmationRequired": false,
-                      "elicitationRequired": true,
-                      "prompts": {
-                          "elicitation": "Elicit.Slot.932310416052.1004645578092"
-                      }
-                  }
-              ]
-          },
-          {
-              "name": "RemoveMovieIntent",
-              "confirmationRequired": false,
-              "prompts": {},
-              "slots": [
-                  {
-                      "name": "MovieName",
-                      "type": "AMAZON.Movie",
-                      "confirmationRequired": false,
-                      "elicitationRequired": true,
-                      "prompts": {
-                          "elicitation": "Elicit.Slot.1034415917954.788060345760"
-                      }
-                  }
-              ]
-          }
-      ]
-    },
-    "prompts": [
         {
-            "id": "Elicit.Slot.932310416052.1004645578092",
-            "variations": [
-                {
-                    "type": "PlainText",
-                    "value": "Which movie would you like to add "
-                }
-            ]
+          "name": "AddMovieIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "MovieName",
+              "type": "AMAZON.Movie",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.932310416052.1004645578092"
+              }
+            }
+          ]
         },
         {
-            "id": "Elicit.Slot.1034415917954.788060345760",
-            "variations": [
-                {
-                    "type": "PlainText",
-                    "value": "Which movie would you like to remove "
-                }
-            ]
+          "name": "RemoveMovieIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "MovieName",
+              "type": "AMAZON.Movie",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.1034415917954.788060345760"
+              }
+            }
+          ]
+        },
+        {
+          "name": "AddMemoryIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.898575368943"
+          },
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.898575368943.637040789450"
+              }
+            },
+            {
+              "name": "MemoryAnswer",
+              "type": "MemoryAnswer",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.898575368943.434026098751"
+              }
+            }
+          ]
         }
+      ],
+      "delegationStrategy": "SKILL_RESPONSE"
+    },
+    "prompts": [
+      {
+        "id": "Elicit.Slot.932310416052.1004645578092",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of the movie"
+          },
+          {
+            "type": "PlainText",
+            "value": "Which movie would you like to add "
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.1034415917954.788060345760",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Which movie would you like to remove "
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.898575368943.637040789450",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the question or title of this memory?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.898575368943.434026098751",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the answer or fact for this memory?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.898575368943",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Memory collected. Should we go ahead and save it permanently?"
+          }
+        ]
+      }
     ]
   }
 }

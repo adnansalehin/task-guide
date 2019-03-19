@@ -10,7 +10,7 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = 'Hello there. What is your favourite movie? You can say add moviename to add your favourite movie or say list my movies to get your favourite movies.';
+    const speechText = 'Hello there. You can say add memory to add your memories or say list my memories to get your memories.';
     const repromptText = 'What would you like to do? You can say HELP to get available options';
 
     return handlerInput.responseBuilder
@@ -34,6 +34,53 @@ const InProgressAddMovieIntentHandler = {
       .getResponse();
   }
 }
+
+const InProgressAddMemoryIntentHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddMemoryIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+const AddMemoryIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddMemoryIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const memory = {
+      question: slots.MemoryQuestion.value,
+      answer: slots.MemoryAnswer.value
+    };
+    console.log(slots);
+    return dbHelper.addMemory(memory, userID)
+      .then((data) => {
+        const speechText = "You have successfully added that memory. You can say add memory to add another one or remove memory to remove a memory";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while saving your memory", err);
+        const speechText = "we could not save your memory right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
 
 const AddMovieIntentHandler = {
   canHandle(handlerInput) {
@@ -75,7 +122,7 @@ const GetMoviesIntentHandler = {
       .then((data) => {
         var speechText = "Your movies are "
         if (data.length == 0) {
-          speechText = "You do not have any favourite movie yet, add movie by saving add moviename "
+          speechText = "You do not have any favourite movies yet, add a movie by saving add movie"
         } else {
           speechText += data.map(e => e.movieTitle).join(", ")
         }
@@ -113,7 +160,7 @@ const RemoveMovieIntentHandler = {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'RemoveMovieIntent';
   }, 
-  handle(handlerInput) {
+  async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
@@ -196,6 +243,8 @@ const skillBuilder = Alexa.SkillBuilders.standard();
 exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
+    InProgressAddMemoryIntentHandler,
+    AddMemoryIntentHandler,
     InProgressAddMovieIntentHandler,
     AddMovieIntentHandler,
     GetMoviesIntentHandler,

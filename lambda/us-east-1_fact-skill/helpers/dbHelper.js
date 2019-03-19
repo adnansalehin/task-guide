@@ -5,12 +5,35 @@ const tableName = "dynamodb-starter";
 var dbHelper = function () { };
 var docClient = new AWS.DynamoDB.DocumentClient();
 
+dbHelper.prototype.addMemory = (memory, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: tableName,
+            Item: {
+              'memoryQuestion' : memory.question,
+              'memoryAnswer' : memory.answer,
+              'movieTitle' : "",
+              'userId': userID
+            }
+        };
+        docClient.put(params, (err, data) => {
+            if (err) {
+                console.log("Unable to insert =>", JSON.stringify(err))
+                return reject("Unable to insert");
+            }
+            console.log("Saved Data, ", JSON.stringify(data));
+            resolve(data);
+        });
+    });
+}
+
 dbHelper.prototype.addMovie = (movie, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
             TableName: tableName,
             Item: {
               'movieTitle' : movie,
+              'subTitle': "sub text",
               'userId': userID
             }
         };
