@@ -4,7 +4,7 @@
 const Alexa = require('ask-sdk');
 const dbHelper = require('./helpers/dbHelper');
 const GENERAL_REPROMPT = "What would you like to do?";
-const dynamoDBTableName = "dynamodb-starter";
+const dynamoDBTableName = "memory-bank";
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
@@ -75,6 +75,37 @@ const AddMemoryIntentHandler = {
       .catch((err) => {
         console.log("An error occured while saving your memory", err);
         const speechText = "we could not save your memory right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const QueryMemoryIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'QueryMemoryIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const memory = {
+      question: slots.MemoryQuestion.value,
+    };
+    console.log(slots);
+    return dbHelper.queryMemory(memory, userID)
+      .then((data) => {
+        const speechText = data.memoryAnswer;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your memory", err);
+        const speechText = "we could not retrieve your memory right now. Please try again!"
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -189,11 +220,11 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'You can introduce yourself by telling me your name';
+    const speechText = 'You can add memories or ask about your stored memories';
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .reprompt(speechText)
+      .reprompt(GENERAL_REPROMPT)
       .getResponse();
   },
 };
@@ -245,6 +276,7 @@ exports.handler = skillBuilder
     LaunchRequestHandler,
     InProgressAddMemoryIntentHandler,
     AddMemoryIntentHandler,
+    QueryMemoryIntentHandler,
     InProgressAddMovieIntentHandler,
     AddMovieIntentHandler,
     GetMoviesIntentHandler,

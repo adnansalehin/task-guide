@@ -1,7 +1,7 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "task guide",
+      "invocationName": "my memories",
       "intents": [
         {
           "name": "AMAZON.CancelIntent",
@@ -93,10 +93,28 @@
             "add memory answer {MemoryAnswer}",
             "add memory {MemoryQuestion}",
             "add memory",
+            "add a memory",
+            "add new memory",
+            "add a new memory",
             "add memory {MemoryQuestion} and answer {MemoryAnswer}",
             "add memory with question {MemoryQuestion} and with answer {MemoryAnswer}",
             "add memory question {MemoryQuestion} and answer {MemoryAnswer}",
             "add memory {MemoryQuestion} with answer {MemoryAnswer}"
+          ]
+        },
+        {
+          "name": "QueryMemoryIntent",
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion"
+            }
+          ],
+          "samples": [
+            "remind me",
+            "help me remember",
+            "remind me {MemoryQuestion}",
+            "help me remember {MemoryQuestion}"
           ]
         }
       ],
@@ -183,6 +201,23 @@
               }
             }
           ]
+        },
+        {
+          "name": "QueryMemoryIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.1144295106695.758920757558"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
         }
       ],
       "delegationStrategy": "SKILL_RESPONSE"
@@ -220,6 +255,15 @@
         ]
       },
       {
+        "id": "Elicit.Slot.898575368943.637040789455",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "which memory would you like to be reminded of?"
+          }
+        ]
+      },
+      {
         "id": "Elicit.Slot.898575368943.434026098751",
         "variations": [
           {
@@ -236,7 +280,26 @@
             "value": "Memory collected. Should we go ahead and save it permanently?"
           }
         ]
+      },
+      {
+        "id": "Elicit.Slot.1144295106695.758920757558",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What would you like to be reminded of?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.334188036895.139524607276",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "please fill in the testing slot"
+          }
+        ]
       }
     ]
-  }
+  },
+  "version": "50"
 }
