@@ -97,7 +97,7 @@ const QueryMemoryIntentHandler = {
     console.log(slots);
     return dbHelper.queryMemory(memory, userID)
       .then((data) => {
-        const speechText = data.memoryAnswer;
+        const speechText = data.memoryAnswer || "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -105,7 +105,7 @@ const QueryMemoryIntentHandler = {
       })
       .catch((err) => {
         console.log("An error occured while retrieving your memory", err);
-        const speechText = "we could not retrieve your memory right now. Please try again!"
+        const speechText = "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory"
         return responseBuilder
           .speak(speechText)
           .getResponse();
