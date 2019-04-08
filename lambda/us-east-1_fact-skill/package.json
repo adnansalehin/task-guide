@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "alexa-sdk": "^1.0.25",
-    "ask-sdk": "^2.0.10"
+    "ask-sdk": "^2.0.10",
+    "nlcst-to-string": "^2.0.2",
+    "retext": "^6.0.1",
+    "retext-keywords": "^4.0.2"
   }
 }

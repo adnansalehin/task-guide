@@ -96,7 +96,7 @@ const QueryMemoryIntentHandler = {
     };
     console.log(slots);
     return dbHelper.queryMemory(memory, userID)
-      .then((data) => {
+      .then(data => {
         const speechText = data.memoryAnswer || "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory";
         return responseBuilder
           .speak(speechText)
