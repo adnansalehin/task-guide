@@ -2,6 +2,7 @@ const AWS = require("aws-sdk");
 const retext = require('retext')
 const keywords = require("retext-keywords");
 const toString = require('nlcst-to-string');
+const thesaurus = require('thesaurus');
 
 AWS.config.update({region: "us-east-1"});
 const TABLE_NAME = "memory-bank";
@@ -32,8 +33,9 @@ dbHelper.prototype.addMemory = (memory, userID) => {
 
 dbHelper.prototype.queryMemory = (memory, userID) => {
     return new Promise((resolve, reject) => {
-        const keywordList = [];
+        let keywordList = [];
         populateKeywordList(keywordList, memory.question);
+        keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
         
         const params = {
             TableName: TABLE_NAME,
@@ -52,16 +54,20 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
             } 
             console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
             let resolvedItem;
+            //go through each item in the database to find a match
             data.Items.forEach((item) => {
-                const dbMemoryQuestionKeywords = [];
+                let dbMemoryQuestionKeywords = [];
                 populateKeywordList(dbMemoryQuestionKeywords, item.memoryQuestion);
-                console.log("Populated db keywords: \n");
-                console.log(dbMemoryQuestionKeywords);
-                if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value))) {
-                    console.log("MATCH");
-                    console.log("resolvedItem: ");
-                    console.log(item);
+                dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !EXCLUDE.includes(i));
+
+                if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value)))
                     resolvedItem = item;
+                else {
+                    const similarityIndex =  applyDiceAndCosineSimilarity(memory.question, item.memoryQuestion);
+                    if(similarityIndex > 80)
+                        resolvedItem = item;
+                    else
+                        resolvedItem = null;
                 }
             });
             resolve(resolvedItem);
@@ -135,7 +141,7 @@ dbHelper.prototype.removeMovie = (movie, userID) => {
     });
 }
 
-const populateKeywordList = (keywordList, textInput) => {
+const populateKeywordList = (wordList, textInput) => {
     retext()
     .use(keywords)
     .process(textInput, (err, text) => {
@@ -143,11 +149,68 @@ const populateKeywordList = (keywordList, textInput) => {
             console.error("Failed to extract keywords");
         } else {
             text.data.keywords.forEach(keyword => {
-                keywordList.push(toString(keyword.matches[0].node));
-            })
-            keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
+                wordList.push(toString(keyword.matches[0].node).replace("\'s", ""));
+            });
         }
     });
 }
+
+const applyDiceAndCosineSimilarity = (string1, string2) => {
+    const c = parseFloat(consineSimilarity(string1, string2));
+    const d = parseFloat(diceSimilarity(string1, string2));
+    return (c+d)/2;
+}
+
+// CosineSimilarity
+const consineSimilarity = (string1, string2) => {
+    const {commonTerms, termsInString1, termsInString2} = parseForSimilarity(string1, string2)
+    return (commonTerms / (Math.pow(termsInString1, 0.5) * Math.pow(termsInString2, 0.5)) * 100).toFixed(2);
+}
+
+//diceSimilarity
+const diceSimilarity = (string1, string2) => {
+    const {commonTerms, termsInString1, termsInString2} = parseForSimilarity(string1, string2)    
+    return (((2 * commonTerms) / (termsInString1 + termsInString2)) * 100).toFixed(2);
+}
+
+// similarity caluclation helper function
+const parseForSimilarity = (string1, string2) => {
+
+    const arr1 = cleanString(string1).split(/\s+/);
+    const arr2 = cleanString(string2).split(/\s+/);
+
+    let allTokensSet = removeDuplicates(arr1);
+    const termsInString1 = allTokensSet.length;
+
+    const secondStringTokensSet = removeDuplicates(arr2);
+    const termsInString2 = secondStringTokensSet.length;
+
+    const tempArr = arr1.concat(arr2);
+    allTokensSet = removeDuplicates(tempArr);
+    const commonTerms = (termsInString1 + termsInString2) - allTokensSet.length;
+    
+    return {commonTerms, termsInString1, termsInString2}
+}
+
+const cleanString = stringIn => {
+    const temp = stringIn.trim().toLowerCase();
+    const re = /([   ]{1,})/g;
+    const temp1 = temp.replace(re, " ");
+    return temp1;
+}
+
+//remove duplicate elements in the array
+const removeDuplicates = array => {
+
+    var newArray = [], provisionalTable = {};
+    for (var i = 0, item; (item = array[i]) != null; i++) {
+        if (!provisionalTable[item]) {
+            newArray.push(item);
+            provisionalTable[item] = true;
+        }
+    }
+    return newArray;
+}
+
 
 module.exports = new dbHelper();
