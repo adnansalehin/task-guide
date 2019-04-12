@@ -2,7 +2,7 @@ const AWS = require("aws-sdk");
 const retext = require('retext')
 const keywords = require("retext-keywords");
 const toString = require('nlcst-to-string');
-const thesaurus = require('thesaurus');
+const unirest = require('unirest');
 
 AWS.config.update({region: "us-east-1"});
 const TABLE_NAME = "memory-bank";
@@ -10,70 +10,6 @@ const dbHelper = function () { };
 const docClient = new AWS.DynamoDB.DocumentClient();
 const EXCLUDE = ["what", "what's", "how", "how's", "when", "when's", "where", "where's"]
 
-dbHelper.prototype.addMemory = (memory, userID) => {
-    return new Promise((resolve, reject) => {
-        const params = {
-            TableName: TABLE_NAME,
-            Item: {
-              'memoryQuestion' : memory.question,
-              'memoryAnswer' : memory.answer,
-              'userId': userID
-            }
-        };
-        docClient.put(params, (err, data) => {
-            if (err) {
-                console.log("Unable to insert =>", JSON.stringify(err))
-                return reject("Unable to insert");
-            }
-            console.log("Saved Data, ", JSON.stringify(data));
-            resolve(data);
-        });
-    });
-}
-
-dbHelper.prototype.queryMemory = (memory, userID) => {
-    return new Promise((resolve, reject) => {
-        let keywordList = [];
-        populateKeywordList(keywordList, memory.question);
-        keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
-        
-        const params = {
-            TableName: TABLE_NAME,
-            KeyConditionExpression: "#userID = :_id",
-            ExpressionAttributeNames: {
-                "#userID": "userId",
-            },
-            ExpressionAttributeValues: {
-                ":_id": userID,
-            }
-        };
-        docClient.query(params, (err, data) => {
-            if (err) {
-                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-                return reject(JSON.stringify(err, null, 2))
-            } 
-            console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-            let resolvedItem;
-            //go through each item in the database to find a match
-            data.Items.forEach((item) => {
-                let dbMemoryQuestionKeywords = [];
-                populateKeywordList(dbMemoryQuestionKeywords, item.memoryQuestion);
-                dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !EXCLUDE.includes(i));
-
-                if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value)))
-                    resolvedItem = item;
-                else {
-                    const similarityIndex =  applyDiceAndCosineSimilarity(memory.question, item.memoryQuestion);
-                    if(similarityIndex > 80)
-                        resolvedItem = item;
-                    else
-                        resolvedItem = null;
-                }
-            });
-            resolve(resolvedItem);
-        });
-    });
-}
 
 dbHelper.prototype.addMovie = (movie, userID) => {
     return new Promise((resolve, reject) => {
@@ -138,6 +74,119 @@ dbHelper.prototype.removeMovie = (movie, userID) => {
             console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
             resolve()
         })
+    });
+}
+
+dbHelper.prototype.addMemory = (memory, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_NAME,
+            Item: {
+              'memoryQuestion' : memory.question,
+              'memoryAnswer' : memory.answer,
+              'userId': userID
+            }
+        };
+        docClient.put(params, (err, data) => {
+            if (err) {
+                console.log("Unable to insert =>", JSON.stringify(err))
+                return reject("Unable to insert");
+            }
+            console.log("Saved Data, ", JSON.stringify(data));
+            resolve(data);
+        });
+    });
+}
+
+dbHelper.prototype.queryMemory = (memory, userID) => {
+        let keywordList = [];
+        populateKeywordList(keywordList, memory.question);
+        keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
+        
+        const params = {
+            TableName: TABLE_NAME,
+            KeyConditionExpression: "#userID = :_id",
+            ExpressionAttributeNames: {
+                "#userID": "userId",
+            },
+            ExpressionAttributeValues: {
+                ":_id": userID,
+            }
+        };
+    const synonymPromiseList = [];
+    const promise = new Promise((resolve, reject) => {
+
+        docClient.query(params, (err, data) => {
+            if (err) {
+                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2))
+            } 
+            console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+            //go through each item in the database to find a match
+            data.Items.forEach((item) => {
+                let dbMemoryQuestionKeywords = [];
+                populateKeywordList(dbMemoryQuestionKeywords, item.memoryQuestion);
+                dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !EXCLUDE.includes(i));
+                console.log("Populated db keywords: \n");
+                console.log(dbMemoryQuestionKeywords);
+                if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value))) {
+                    console.log("MATCH");
+                    console.log("resolvedItem: ");
+                    console.log(item);
+                    resolve(item);                    
+                } else {
+                    const similarityIndex =  applyDiceAndCosineSimilarity(memory.question, item.memoryQuestion);
+                    if(similarityIndex > 80)
+                        resolve(item);                    
+                    else {
+                        const synonymPromise = applySynonymCheck(keywordList, dbMemoryQuestionKeywords).then(sIndex=>{
+                            console.log("Similarity Index with Synonyms: " + sIndex.toString());
+                            if(sIndex > 80)
+                                resolve(item);
+                        });
+                        synonymPromiseList.push(synonymPromise);
+                    }
+                    console.log("Similarity Index: " + similarityIndex.toString());
+                }
+            });
+        });
+    });
+    synonymPromiseList.push(promise);
+    return Promise.all(synonymPromiseList).then(resolvedItem => {
+        return(resolvedItem.pop());
+    });
+}
+
+const getSynonyms = word => {
+    return new Promise((resolve, reject) => {
+        unirest.get("https://wordsapiv1.p.mashape.com/words/" + word + "/synonyms")
+            .header("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
+            .header("X-RapidAPI-Key", "6865f7788bmsh4f19be9d2d7d470p1e7111jsn3f116a171e48")
+            .end(function(result) {
+                resolve(result.body.synonyms);
+            });
+    });
+}
+
+const applySynonymCheck = (kList, kList2) => {
+    const synonymPromiseList = [];
+    kList.forEach(word => {
+        const synonymPromise = getSynonyms(word).then(synonyms => {
+            kList2.forEach(i => {
+                //if synonyms of a keyword matches with a keyword in database then
+                // replace original with database value
+                if (synonyms.includes(i)) {
+                    kList[kList.indexOf(word)] = i;
+                }
+            });
+        });
+        synonymPromiseList.push(synonymPromise);
+    });
+    return Promise.all(synonymPromiseList).then(_ => {
+        console.log("SIMILARITY CHECK:")
+        console.log(kList);
+        console.log(kList2);
+        return applyDiceAndCosineSimilarity(kList.join(" "), kList2.join(" "));
     });
 }
 

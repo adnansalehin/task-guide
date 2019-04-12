@@ -8,6 +8,6 @@
     "nlcst-to-string": "^2.0.2",
     "retext": "^6.0.1",
     "retext-keywords": "^4.0.2",
-    "thesaurus": "0.0.0"
+    "unirest": "^0.6.0"
   }
 }
