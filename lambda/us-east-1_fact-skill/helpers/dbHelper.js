@@ -146,28 +146,28 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
     return Promise.all(promiseList).then(result => result.pop());
 }
 
-const checkTextMatch = (textDB, textIn) => {
+const checkTextMatch = (dbText, utteredText) => {
     
     return new Promise((resolve, reject) => {
-        if(textDB==textIn)
+        if(dbText==utteredText)
             resolve(true);
         else {
-            let keywordList = [];
-            populateKeywordList(keywordList, textIn);
-            keywordList = keywordList.filter(i => !QUESTION_WORDS.includes(i));
-            let dbMemoryQuestionKeywords = [];
-            populateKeywordList(dbMemoryQuestionKeywords, textDB);
-            dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !QUESTION_WORDS.includes(i));
+            let utteredSentenceKeywords = [];
+            populateKeywordList(utteredSentenceKeywords, utteredText);
+            utteredSentenceKeywords = utteredSentenceKeywords.filter(i => !QUESTION_WORDS.includes(i));
+            let dbSentenceKeywords = [];
+            populateKeywordList(dbSentenceKeywords, dbText);
+            dbSentenceKeywords = dbSentenceKeywords.filter(i => !QUESTION_WORDS.includes(i));
 
-            if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value)))
+            if(dbSentenceKeywords.every(value => utteredSentenceKeywords.includes(value)))
                 resolve(true);
             else {
-                const similarityIndex =  applyDiceAndCosineSimilarity(textIn, textDB);
+                const similarityIndex =  applyDiceAndCosineSimilarity(utteredText, dbText);
                 console.log("Similarity Index: " + similarityIndex.toString());
                 if(similarityIndex > 80)
                     resolve(true);                    
                 else {
-                    applySynonymCheck(keywordList, dbMemoryQuestionKeywords).then(sIndex => {
+                    applySynonymCheck(utteredSentenceKeywords, dbSentenceKeywords).then(sIndex => {
                         console.log("Similarity Index with Synonyms: " + sIndex.toString());
                         if(sIndex > 80)
                             resolve(true);
