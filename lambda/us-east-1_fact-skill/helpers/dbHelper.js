@@ -100,17 +100,19 @@ dbHelper.prototype.addMemory = (memory, userID) => {
 
 dbHelper.prototype.queryMemory = (memory, userID) => {
         
-        const params = {
-            TableName: TABLE_NAME,
-            KeyConditionExpression: "#userID = :_id",
-            ExpressionAttributeNames: {
-                "#userID": "userId",
-            },
-            ExpressionAttributeValues: {
-                ":_id": userID,
-            }
-        };
-    const synonymPromiseList = [];
+    const params = {
+        TableName: TABLE_NAME,
+        KeyConditionExpression: "#userID = :_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId",
+        },
+        ExpressionAttributeValues: {
+            ":_id": userID,
+        }
+    };
+
+    let itemFound = false;
+    const spList = [];
     const promise = new Promise((resolve, reject) => {
 
         docClient.query(params, (err, data) => {
@@ -119,27 +121,28 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
                 return reject(JSON.stringify(err, null, 2))
             } 
             //go through each item in the database to find a match
+            let i=1;
             data.Items.forEach((item) => {
-                const spList = [];
-                const match = findDBTextMatch(item.memoryQuestion, memory.question, synonymPromiseList);
-                if(match==true)            
-                    resolve(item);
-                else {
-                    match.then(synonymMatch => {
-                        if(synonymMatch) 
-                            resolve(item);
-                    });
-                }
+                spList.push(findDBTextMatch(item.memoryQuestion, memory.question)
+                .then((match) => {
+                    if(match==true){            
+                        itemFound = true;
+                        resolve(item);
+                    }
+                    if(!itemFound && i >= data.Items.length) {
+                        console.log("ITEM NOT FOUND");
+                        resolve(false);
+                    }
+                    i++;
+                }));
             });
         });
     });
-    synonymPromiseList.push(promise);
-    return Promise.all(synonymPromiseList).then(resolvedItem => {
-        return(resolvedItem.pop());
-    });
+    spList.push(promise);
+    return Promise.all(spList).then(result => result.pop());
 }
 
-const findDBTextMatch = (textDB, textIn, synonymPromiseList) => {
+const findDBTextMatch = (textDB, textIn) => {
     let keywordList = [];
     populateKeywordList(keywordList, textIn);
     keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
@@ -147,28 +150,26 @@ const findDBTextMatch = (textDB, textIn, synonymPromiseList) => {
     populateKeywordList(dbMemoryQuestionKeywords, textDB);
     dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !EXCLUDE.includes(i));
 
-    console.log("Populated db keywords: \n");
-    console.log(dbMemoryQuestionKeywords);
-    if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value))) {
-        return true;                   
-    } else {
-        const similarityIndex =  applyDiceAndCosineSimilarity(textIn, textDB);
-        console.log("Similarity Index: " + similarityIndex.toString());
-        if(similarityIndex > 80)
-            return true;                    
+    return new Promise((resolve, reject) => {
+        if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value)))
+            resolve (true);
         else {
-            const synonymPromise = applySynonymCheck(keywordList, dbMemoryQuestionKeywords).then(sIndex=>{
-                console.log("Similarity Index with Synonyms: " + sIndex.toString());
-                if(sIndex > 80)
-                    return true;
-                else
-                    return false;
-            });
-            synonymPromiseList.push(synonymPromise);
-            return synonymPromise;
+            const similarityIndex =  applyDiceAndCosineSimilarity(textIn, textDB);
+            console.log("Similarity Index: " + similarityIndex.toString());
+            if(similarityIndex > 80)
+                resolve(true);                    
+            else {
+                applySynonymCheck(keywordList, dbMemoryQuestionKeywords).then(sIndex => {
+                    console.log("Similarity Index with Synonyms: " + sIndex.toString());
+                    if(sIndex > 80)
+                        resolve(true);
+                    else
+                        resolve(false);
+                });
+            }
         }
-    }
-}
+    });
+}  
 
 const getSynonyms = word => {
     return new Promise((resolve, reject) => {
