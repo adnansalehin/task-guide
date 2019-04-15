@@ -5,16 +5,20 @@ const toString = require('nlcst-to-string');
 const unirest = require('unirest');
 
 AWS.config.update({region: "us-east-1"});
-const TABLE_NAME = "memory-bank";
+const TABLE_MEMORY = "memory-bank";
+const TABLE_MOVIES = "dynamodb-starter";
 const dbHelper = function () { };
 const docClient = new AWS.DynamoDB.DocumentClient();
-const EXCLUDE = ["what", "what's", "how", "how's", "when", "when's", "where", "where's"]
+const QUESTION_WORDS = [
+    "what", "what's", "how", "how's", "when", "when's", "where", "where's",
+    "who", "who's", "why", "why's"
+]
 
 
 dbHelper.prototype.addMovie = (movie, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_NAME,
+            TableName: TABLE_MOVIES,
             Item: {
               'movieTitle' : movie,
               'subTitle': "sub text",
@@ -35,7 +39,7 @@ dbHelper.prototype.addMovie = (movie, userID) => {
 dbHelper.prototype.getMovies = (userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_NAME,
+            TableName: TABLE_MOVIES,
             KeyConditionExpression: "#userID = :user_id",
             ExpressionAttributeNames: {
                 "#userID": "userId"
@@ -59,7 +63,7 @@ dbHelper.prototype.getMovies = (userID) => {
 dbHelper.prototype.removeMovie = (movie, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_NAME,
+            TableName: TABLE_MOVIES,
             Key: {
                 "userId": userID,
                 "movieTitle": movie
@@ -80,7 +84,7 @@ dbHelper.prototype.removeMovie = (movie, userID) => {
 dbHelper.prototype.addMemory = (memory, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_NAME,
+            TableName: TABLE_MEMORY,
             Item: {
               'memoryQuestion' : memory.question,
               'memoryAnswer' : memory.answer,
@@ -101,7 +105,7 @@ dbHelper.prototype.addMemory = (memory, userID) => {
 dbHelper.prototype.queryMemory = (memory, userID) => {
         
     const params = {
-        TableName: TABLE_NAME,
+        TableName: TABLE_MEMORY,
         KeyConditionExpression: "#userID = :_id",
         ExpressionAttributeNames: {
             "#userID": "userId",
@@ -123,7 +127,7 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(findDBTextMatch(item.memoryQuestion, memory.question)
+                promiseList.push(checkTextMatch(item.memoryQuestion, memory.question)
                 .then(match => {
                     if(match){            
                         itemFound = true;
@@ -142,7 +146,7 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
     return Promise.all(promiseList).then(result => result.pop());
 }
 
-const findDBTextMatch = (textDB, textIn) => {
+const checkTextMatch = (textDB, textIn) => {
     
     return new Promise((resolve, reject) => {
         if(textDB==textIn)
@@ -150,10 +154,10 @@ const findDBTextMatch = (textDB, textIn) => {
         else {
             let keywordList = [];
             populateKeywordList(keywordList, textIn);
-            keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
+            keywordList = keywordList.filter(i => !QUESTION_WORDS.includes(i));
             let dbMemoryQuestionKeywords = [];
             populateKeywordList(dbMemoryQuestionKeywords, textDB);
-            dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !EXCLUDE.includes(i));
+            dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !QUESTION_WORDS.includes(i));
 
             if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value)))
                 resolve(true);
