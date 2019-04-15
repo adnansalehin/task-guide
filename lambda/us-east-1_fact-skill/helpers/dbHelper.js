@@ -26,9 +26,9 @@ dbHelper.prototype.addMovie = (movie, userID) => {
             }
         };
         docClient.put(params, (err, data) => {
-            if (err) {
-                console.log("Unable to insert =>", JSON.stringify(err))
-                return reject("Unable to insert");
+            if(err) {
+                console.error("Unable to insert movie", JSON.stringify(err))
+                return reject("Unable to add movie");
             }
             console.log("Saved Data, ", JSON.stringify(data));
             resolve(data);
@@ -49,7 +49,7 @@ dbHelper.prototype.getMovies = (userID) => {
             }
         }
         docClient.query(params, (err, data) => {
-            if (err) {
+            if(err) {
                 console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
                 return reject(JSON.stringify(err, null, 2))
             } 
@@ -71,7 +71,7 @@ dbHelper.prototype.removeMovie = (movie, userID) => {
             ConditionExpression: "attribute_exists(movieTitle)"
         }
         docClient.delete(params, (err, data) => {
-            if (err) {
+            if(err) {
                 console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
                 return reject(JSON.stringify(err, null, 2))
             }
@@ -92,8 +92,8 @@ dbHelper.prototype.addMemory = (memory, userID) => {
             }
         };
         docClient.put(params, (err, data) => {
-            if (err) {
-                console.log("Unable to insert =>", JSON.stringify(err))
+            if(err) {
+                console.error("Unable to insert Memory", JSON.stringify(err))
                 return reject("Unable to insert");
             }
             console.log("Saved Data, ", JSON.stringify(data));
@@ -120,16 +120,15 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
     const promise = new Promise((resolve, reject) => {
 
         docClient.query(params, (err, data) => {
-            if (err) {
-                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+            if(err) {
+                console.error("Unable to read memory table. Error JSON:", JSON.stringify(err, null, 2));
                 return reject(JSON.stringify(err, null, 2));
             }
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.memoryQuestion, memory.question)
-                .then(match => {
-                    if(match){            
+                promiseList.push(checkTextMatch(item.memoryQuestion, memory.question).then(match => {
+                    if(match) {            
                         itemFound = true;
                         resolve(item);
                     }
@@ -196,9 +195,8 @@ const applySynonymCheck = (kList, kList2) => {
     kList.forEach(word => {
         const synonymPromise = getSynonyms(word).then(synonyms => {
             kList2.forEach(i => {
-                //if synonyms of a keyword matches with a keyword in database then
-                // replace original with database value
-                if (synonyms.includes(i)) {
+                // if synonyms of a keyword matches with a keyword in database then replace original with database value
+                if(synonyms.includes(i)) {
                     kList[kList.indexOf(word)] = i;
                 }
             });
@@ -212,7 +210,7 @@ const populateKeywordList = (wordList, textInput) => {
     retext()
     .use(keywords)
     .process(textInput, (err, text) => {
-        if (err) {
+        if(err) {
             console.error("Failed to extract keywords");
         } else {
             text.data.keywords.forEach(keyword => {
@@ -228,19 +226,19 @@ const applyDiceAndCosineSimilarity = (string1, string2) => {
     return (c+d)/2;
 }
 
-// CosineSimilarity
+// Cosine Similarity
 const consineSimilarity = (string1, string2) => {
     const {commonTerms, termsInString1, termsInString2} = parseForSimilarity(string1, string2)
     return (commonTerms / (Math.pow(termsInString1, 0.5) * Math.pow(termsInString2, 0.5)) * 100).toFixed(2);
 }
 
-//diceSimilarity
+// Dice Similarity
 const diceSimilarity = (string1, string2) => {
     const {commonTerms, termsInString1, termsInString2} = parseForSimilarity(string1, string2)    
     return (((2 * commonTerms) / (termsInString1 + termsInString2)) * 100).toFixed(2);
 }
 
-// similarity caluclation helper function
+// Similarity caluclation helper function
 const parseForSimilarity = (string1, string2) => {
 
     const arr1 = cleanString(string1).split(/\s+/);
@@ -271,7 +269,7 @@ const removeDuplicates = array => {
 
     var newArray = [], provisionalTable = {};
     for (var i = 0, item; (item = array[i]) != null; i++) {
-        if (!provisionalTable[item]) {
+        if(!provisionalTable[item]) {
             newArray.push(item);
             provisionalTable[item] = true;
         }
