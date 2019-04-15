@@ -112,20 +112,20 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
     };
 
     let itemFound = false;
-    const spList = [];
+    const promiseList = [];
     const promise = new Promise((resolve, reject) => {
 
         docClient.query(params, (err, data) => {
             if (err) {
                 console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-                return reject(JSON.stringify(err, null, 2))
-            } 
+                return reject(JSON.stringify(err, null, 2));
+            }
             //go through each item in the database to find a match
             let i=1;
-            data.Items.forEach((item) => {
-                spList.push(findDBTextMatch(item.memoryQuestion, memory.question)
-                .then((match) => {
-                    if(match==true){            
+            data.Items.forEach(item => {
+                promiseList.push(findDBTextMatch(item.memoryQuestion, memory.question)
+                .then(match => {
+                    if(match){            
                         itemFound = true;
                         resolve(item);
                     }
@@ -138,34 +138,39 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
             });
         });
     });
-    spList.push(promise);
-    return Promise.all(spList).then(result => result.pop());
+    promiseList.push(promise);
+    return Promise.all(promiseList).then(result => result.pop());
 }
 
 const findDBTextMatch = (textDB, textIn) => {
-    let keywordList = [];
-    populateKeywordList(keywordList, textIn);
-    keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
-    let dbMemoryQuestionKeywords = [];
-    populateKeywordList(dbMemoryQuestionKeywords, textDB);
-    dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !EXCLUDE.includes(i));
-
+    
     return new Promise((resolve, reject) => {
-        if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value)))
-            resolve (true);
+        if(textDB==textIn)
+            resolve(true);
         else {
-            const similarityIndex =  applyDiceAndCosineSimilarity(textIn, textDB);
-            console.log("Similarity Index: " + similarityIndex.toString());
-            if(similarityIndex > 80)
-                resolve(true);                    
+            let keywordList = [];
+            populateKeywordList(keywordList, textIn);
+            keywordList = keywordList.filter(i => !EXCLUDE.includes(i));
+            let dbMemoryQuestionKeywords = [];
+            populateKeywordList(dbMemoryQuestionKeywords, textDB);
+            dbMemoryQuestionKeywords = dbMemoryQuestionKeywords.filter(i => !EXCLUDE.includes(i));
+
+            if(dbMemoryQuestionKeywords.every(value => keywordList.includes(value)))
+                resolve(true);
             else {
-                applySynonymCheck(keywordList, dbMemoryQuestionKeywords).then(sIndex => {
-                    console.log("Similarity Index with Synonyms: " + sIndex.toString());
-                    if(sIndex > 80)
-                        resolve(true);
-                    else
-                        resolve(false);
-                });
+                const similarityIndex =  applyDiceAndCosineSimilarity(textIn, textDB);
+                console.log("Similarity Index: " + similarityIndex.toString());
+                if(similarityIndex > 80)
+                    resolve(true);                    
+                else {
+                    applySynonymCheck(keywordList, dbMemoryQuestionKeywords).then(sIndex => {
+                        console.log("Similarity Index with Synonyms: " + sIndex.toString());
+                        if(sIndex > 80)
+                            resolve(true);
+                        else
+                            resolve(false);
+                    });
+                }
             }
         }
     });
@@ -196,12 +201,7 @@ const applySynonymCheck = (kList, kList2) => {
         });
         synonymPromiseList.push(synonymPromise);
     });
-    return Promise.all(synonymPromiseList).then(_ => {
-        console.log("SIMILARITY CHECK:")
-        console.log(kList);
-        console.log(kList2);
-        return applyDiceAndCosineSimilarity(kList.join(" "), kList2.join(" "));
-    });
+    return Promise.all(synonymPromiseList).then(() => applyDiceAndCosineSimilarity(kList.join(" "), kList2.join(" ")));
 }
 
 const populateKeywordList = (wordList, textInput) => {
