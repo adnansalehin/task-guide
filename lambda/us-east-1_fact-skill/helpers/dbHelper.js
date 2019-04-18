@@ -6,7 +6,8 @@ const unirest = require('unirest');
 
 AWS.config.update({region: "us-east-1"});
 const TABLE_MEMORY = "memory-bank";
-const TABLE_MOVIES = "dynamodb-starter";
+const TABLE_MOVIE = "dynamodb-starter";
+const TABLE_ACTIVITY = "activity-bank";
 const dbHelper = function () { };
 const docClient = new AWS.DynamoDB.DocumentClient();
 const QUESTION_WORDS = [
@@ -14,11 +15,12 @@ const QUESTION_WORDS = [
     "who", "who's", "why", "why's"
 ]
 
+// Start movie functions
 
 dbHelper.prototype.addMovie = (movie, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_MOVIES,
+            TableName: TABLE_MOVIE,
             Item: {
               'movieTitle' : movie,
               'subTitle': "sub text",
@@ -39,7 +41,7 @@ dbHelper.prototype.addMovie = (movie, userID) => {
 dbHelper.prototype.getMovies = (userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_MOVIES,
+            TableName: TABLE_MOVIE,
             KeyConditionExpression: "#userID = :user_id",
             ExpressionAttributeNames: {
                 "#userID": "userId"
@@ -63,7 +65,7 @@ dbHelper.prototype.getMovies = (userID) => {
 dbHelper.prototype.removeMovie = (movie, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_MOVIES,
+            TableName: TABLE_MOVIE,
             Key: {
                 "userId": userID,
                 "movieTitle": movie
@@ -80,6 +82,10 @@ dbHelper.prototype.removeMovie = (movie, userID) => {
         })
     });
 }
+
+// End movie functions
+
+// Start memory functions
 
 dbHelper.prototype.addMemory = (memory, userID) => {
     return new Promise((resolve, reject) => {
@@ -127,17 +133,19 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.memoryQuestion, memory.question).then(match => {
-                    if(match) {            
-                        itemFound = true;
-                        resolve(item);
-                    }
-                    if(!itemFound && i >= data.Items.length) {
-                        console.log("ITEM NOT FOUND");
-                        resolve(false);
-                    }
-                    i++;
-                }));
+                promiseList.push(checkTextMatch(item.memoryQuestion, memory.question)
+                    .then(match => {
+                        if(match) {
+                            itemFound = true;
+                            resolve(item);
+                        }
+                        if(!itemFound && i >= data.Items.length) {
+                            console.log("ITEM NOT FOUND");
+                            resolve(false);
+                        }
+                        i++;
+                    })
+                );
             });
         });
     });
@@ -145,6 +153,79 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
     return Promise.all(promiseList).then(result => result.pop());
 }
 
+// End memory functions
+
+// Start activity functions
+
+dbHelper.prototype.addActivity = (activity, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_ACTIVITY,
+            Item: {
+              'activityTitle' : activity.title,
+              'memoryAnswer' : activity.steps,
+              'userId': userID
+            }
+        };
+        docClient.put(params, (err, data) => {
+            if(err) {
+                console.error("Unable to insert Activity", JSON.stringify(err))
+                return reject("Unable to insert");
+            }
+            console.log("Saved Data, ", JSON.stringify(data));
+            resolve(data);
+        });
+    });
+}
+
+dbHelper.prototype.queryActivity = (activity, userID) => {
+        
+    const params = {
+        TableName: TABLE_ACTIVITY,
+        KeyConditionExpression: "#userID = :_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId",
+        },
+        ExpressionAttributeValues: {
+            ":_id": userID,
+        }
+    };
+
+    let itemFound = false;
+    const promiseList = [];
+    const promise = new Promise((resolve, reject) => {
+
+        docClient.query(params, (err, data) => {
+            if(err) {
+                console.error("Unable to read activity table. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2));
+            }
+            //go through each item in the database to find a match
+            let i=1;
+            data.Items.forEach(item => {
+                promiseList.push(checkTextMatch(item.title, activity.title)
+                    .then(match => {
+                        if(match) {
+                            itemFound = true;
+                            resolve(item);
+                        }
+                        if(!itemFound && i >= data.Items.length) {
+                            console.log("ITEM NOT FOUND");
+                            resolve(false);
+                        }
+                        i++;
+                    })
+                );
+            });
+        });
+    });
+    promiseList.push(promise);
+    return Promise.all(promiseList).then(result => result.pop());
+}
+
+// Start helper functions
+
+//Text/Sentence matching function
 const checkTextMatch = (dbText, utteredText) => {
     
     return new Promise((resolve, reject) => {
