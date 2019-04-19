@@ -6,7 +6,7 @@ const unirest = require('unirest');
 
 AWS.config.update({region: "us-east-1"});
 const TABLE_MEMORY = "memory-bank";
-const TABLE_MOVIE = "dynamodb-starter";
+const TABLE_MOVIE = "movie-bank";
 const TABLE_ACTIVITY = "activity-store";
 const TABLE_MEDICATION = "medication-store";
 const TABLE_FAMILY = "family-store";
