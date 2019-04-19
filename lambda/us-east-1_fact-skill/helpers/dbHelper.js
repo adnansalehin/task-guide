@@ -205,7 +205,7 @@ dbHelper.prototype.queryActivity = (activity, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.name, activity.name)
+                promiseList.push(checkTextMatch(item.activityName, activity.name)
                     .then(match => {
                         if(match) {
                             itemFound = true;
@@ -276,7 +276,7 @@ dbHelper.prototype.queryMedication = (medication, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.name, medication.name)
+                promiseList.push(checkTextMatch(item.medicationName, medication.name)
                     .then(match => {
                         if(match) {
                             itemFound = true;
@@ -322,8 +322,9 @@ dbHelper.prototype.addFamilyMember = (familyMember, userID) => {
     });
 }
 
-dbHelper.prototype.queryFamilyMember = (familyMember, userID) => {
-        
+//find family member info by any atribute the user wants. e.g. a fact about them, their relationship with the user, etc.
+dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) => {
+    
     const params = {
         TableName: TABLE_FAMILY,
         KeyConditionExpression: "#userID = :_id",
@@ -337,6 +338,7 @@ dbHelper.prototype.queryFamilyMember = (familyMember, userID) => {
 
     let itemFound = false;
     const promiseList = [];
+
     const promise = new Promise((resolve, reject) => {
 
         docClient.query(params, (err, data) => {
@@ -347,7 +349,7 @@ dbHelper.prototype.queryFamilyMember = (familyMember, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.name, familyMember.name)
+                promiseList.push(checkTextMatch(getFamilyDBText(item, attributeName), attributeValue)
                     .then(match => {
                         if(match) {
                             itemFound = true;
@@ -369,7 +371,21 @@ dbHelper.prototype.queryFamilyMember = (familyMember, userID) => {
 
 // End familyMember functions
 
+
 // Start helper functions
+
+const getFamilyDBText = (item, attributeName) => {
+    switch(attributeName) {
+        case "name":
+            return item.familyMemberName;
+        case "relationship":
+            return item.familyMemberRelationship;
+        case "fact":
+            return item.familyMemberFact;
+        default:
+            return item.familyMemberName;
+    }
+}
 
 //Text/Sentence matching function
 const checkTextMatch = (dbText, utteredText) => {
