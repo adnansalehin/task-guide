@@ -155,10 +155,76 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
     return Promise.all(promiseList).then(result => result.pop());
 }
 
+dbHelper.prototype.editMemory = (memory, userID) => {
+        
+    const params = {
+        TableName: TABLE_MEMORY,
+        KeyConditionExpression: "#userID = :_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId",
+        },
+        ExpressionAttributeValues: {
+            ":_id": userID,
+        }
+    };
+
+    let itemFound = false;
+    const promiseList = [];
+    const promise = new Promise((resolve, reject) => {
+
+        docClient.query(params, (err, data) => {
+            if(err) {
+                console.error("Unable to read memory table. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2));
+            }
+            //go through each item in the database to find a match
+            let i=1;
+            data.Items.forEach(item => {
+                promiseList.push(checkTextMatch(item.memoryQuestion, memory.question)
+                    .then(match => {
+                        if(match) {
+                            itemFound = true;
+                            const params = {
+                                TableName: TABLE_MEMORY,
+                                Item: {
+                                  'memoryQuestion' : item.memoryQuestion,
+                                  'userId': userID
+                                },
+                                UpdateExpression: "set memoryAnswer = :answer",
+                                ExpressionAttributeValues:{
+                                    ":answer":memory.answer
+                                },
+                                ReturnValues:"UPDATED_NEW"
+                            };
+                            
+                            docClient.update(params, (err, data) => {
+                                if(err) {
+                                    console.error("Unable to update memory table. Error JSON:", JSON.stringify(err, null, 2));
+                                    return reject(JSON.stringify(err, null, 2));
+                                }
+                                console.log("Updated memory data, ", JSON.stringify(data));
+                                resolve(data);
+                            });
+                            // resolve(item);
+                        }
+                        if(!itemFound && i >= data.Items.length) {
+                            console.log("ITEM NOT FOUND");
+                            resolve(false);
+                        }
+                        i++;
+                    })
+                );
+            });
+        });
+    });
+    promiseList.push(promise);
+    return Promise.all(promiseList).then(result => result.pop());
+}
+
 dbHelper.prototype.removeMemory = (memory, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_MOVIE,
+            TableName: TABLE_MEMORY,
             Key: {
                 "userId": userID,
                 "memoryQuestion": memory.question
@@ -249,7 +315,7 @@ dbHelper.prototype.queryActivity = (activity, userID) => {
 dbHelper.prototype.removeActivity = (activity, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_MOVIE,
+            TableName: TABLE_ACTIVITY,
             Key: {
                 "userId": userID,
                 "activityName": activity.name
@@ -341,7 +407,7 @@ dbHelper.prototype.queryMedication = (medication, userID) => {
 dbHelper.prototype.removeMedication = (medication, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_MOVIE,
+            TableName: TABLE_MEDICATION,
             Key: {
                 "userId": userID,
                 "medicationName": medication.name
@@ -435,7 +501,7 @@ dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) =
 dbHelper.prototype.removeFamilyMember = (familyMember, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
-            TableName: TABLE_MOVIE,
+            TableName: TABLE_FAMILY,
             Key: {
                 "userId": userID,
                 "familyMemberName": familyMember.name
