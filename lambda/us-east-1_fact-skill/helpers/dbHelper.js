@@ -7,7 +7,9 @@ const unirest = require('unirest');
 AWS.config.update({region: "us-east-1"});
 const TABLE_MEMORY = "memory-bank";
 const TABLE_MOVIE = "dynamodb-starter";
-const TABLE_ACTIVITY = "activity-bank";
+const TABLE_ACTIVITY = "activity-store";
+const TABLE_MEDICATION = "medication-store";
+const TABLE_FAMILY = "family-store";
 const dbHelper = function () { };
 const docClient = new AWS.DynamoDB.DocumentClient();
 const QUESTION_WORDS = [
@@ -162,8 +164,8 @@ dbHelper.prototype.addActivity = (activity, userID) => {
         const params = {
             TableName: TABLE_ACTIVITY,
             Item: {
-              'activityTitle' : activity.title,
-              'memoryAnswer' : activity.steps,
+              'activityName' : activity.name,
+              'activitySteps' : activity.steps,
               'userId': userID
             }
         };
@@ -203,7 +205,7 @@ dbHelper.prototype.queryActivity = (activity, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.title, activity.title)
+                promiseList.push(checkTextMatch(item.name, activity.name)
                     .then(match => {
                         if(match) {
                             itemFound = true;
@@ -222,6 +224,150 @@ dbHelper.prototype.queryActivity = (activity, userID) => {
     promiseList.push(promise);
     return Promise.all(promiseList).then(result => result.pop());
 }
+
+// End activity functions
+
+// Start medication functions
+
+dbHelper.prototype.addMedication = (medication, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_MEDICATION,
+            Item: {
+              'medicationName' : medication.name,
+              'medicationDosage' : medication.dosage,
+              'medicationFrequency' : medication.frequency,
+              'userId': userID
+            }
+        };
+        docClient.put(params, (err, data) => {
+            if(err) {
+                console.error("Unable to insert Medication", JSON.stringify(err))
+                return reject("Unable to insert");
+            }
+            console.log("Saved Data, ", JSON.stringify(data));
+            resolve(data);
+        });
+    });
+}
+
+dbHelper.prototype.queryMedication = (medication, userID) => {
+        
+    const params = {
+        TableName: TABLE_MEDICATION,
+        KeyConditionExpression: "#userID = :_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId",
+        },
+        ExpressionAttributeValues: {
+            ":_id": userID,
+        }
+    };
+
+    let itemFound = false;
+    const promiseList = [];
+    const promise = new Promise((resolve, reject) => {
+
+        docClient.query(params, (err, data) => {
+            if(err) {
+                console.error("Unable to read medication table. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2));
+            }
+            //go through each item in the database to find a match
+            let i=1;
+            data.Items.forEach(item => {
+                promiseList.push(checkTextMatch(item.name, medication.name)
+                    .then(match => {
+                        if(match) {
+                            itemFound = true;
+                            resolve(item);
+                        }
+                        if(!itemFound && i >= data.Items.length) {
+                            console.log("ITEM NOT FOUND");
+                            resolve(false);
+                        }
+                        i++;
+                    })
+                );
+            });
+        });
+    });
+    promiseList.push(promise);
+    return Promise.all(promiseList).then(result => result.pop());
+}
+
+// End medication functions
+
+// Start familyMember functions
+
+dbHelper.prototype.addFamilyMember = (familyMember, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_FAMILY,
+            Item: {
+              'familyMemberName' : familyMember.name,
+              'familyMemberRelationship' : familyMember.relationship,
+              'familyMemberFact' : familyMember.fact,
+              'userId': userID
+            }
+        };
+        docClient.put(params, (err, data) => {
+            if(err) {
+                console.error("Unable to insert Family Member", JSON.stringify(err))
+                return reject("Unable to insert");
+            }
+            console.log("Saved Data, ", JSON.stringify(data));
+            resolve(data);
+        });
+    });
+}
+
+dbHelper.prototype.queryFamilyMember = (familyMember, userID) => {
+        
+    const params = {
+        TableName: TABLE_FAMILY,
+        KeyConditionExpression: "#userID = :_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId",
+        },
+        ExpressionAttributeValues: {
+            ":_id": userID,
+        }
+    };
+
+    let itemFound = false;
+    const promiseList = [];
+    const promise = new Promise((resolve, reject) => {
+
+        docClient.query(params, (err, data) => {
+            if(err) {
+                console.error("Unable to read familyMember table. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2));
+            }
+            //go through each item in the database to find a match
+            let i=1;
+            data.Items.forEach(item => {
+                promiseList.push(checkTextMatch(item.name, familyMember.name)
+                    .then(match => {
+                        if(match) {
+                            itemFound = true;
+                            resolve(item);
+                        }
+                        if(!itemFound && i >= data.Items.length) {
+                            console.log("ITEM NOT FOUND");
+                            resolve(false);
+                        }
+                        i++;
+                    })
+                );
+            });
+        });
+    });
+    promiseList.push(promise);
+    return Promise.all(promiseList).then(result => result.pop());
+}
+
+// End familyMember functions
 
 // Start helper functions
 
