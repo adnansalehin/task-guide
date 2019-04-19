@@ -73,15 +73,15 @@ dbHelper.prototype.removeMovie = (movie, userID) => {
                 "movieTitle": movie
             },
             ConditionExpression: "attribute_exists(movieTitle)"
-        }
+        };
         docClient.delete(params, (err, data) => {
             if(err) {
                 console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
                 return reject(JSON.stringify(err, null, 2))
             }
-            console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
-            resolve()
-        })
+            console.log("Delete movie succeeded:", JSON.stringify(data, null, 2));
+            resolve();
+        });
     });
 }
 
@@ -155,6 +155,27 @@ dbHelper.prototype.queryMemory = (memory, userID) => {
     return Promise.all(promiseList).then(result => result.pop());
 }
 
+dbHelper.prototype.removeMemory = (memory, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_MOVIE,
+            Key: {
+                "userId": userID,
+                "memoryQuestion": memory.question
+            },
+            ConditionExpression: "attribute_exists(memoryQuestion)"
+        };
+        docClient.delete(params, (err, data) => {
+            if(err) {
+                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2))
+            }
+            console.log("Delete memory succeeded:", JSON.stringify(data, null, 2));
+            resolve();
+        });
+    });
+}
+
 // End memory functions
 
 // Start activity functions
@@ -223,6 +244,27 @@ dbHelper.prototype.queryActivity = (activity, userID) => {
     });
     promiseList.push(promise);
     return Promise.all(promiseList).then(result => result.pop());
+}
+
+dbHelper.prototype.removeActivity = (activity, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_MOVIE,
+            Key: {
+                "userId": userID,
+                "activityName": activity.name
+            },
+            ConditionExpression: "attribute_exists(activityName)"
+        };
+        docClient.delete(params, (err, data) => {
+            if(err) {
+                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2))
+            }
+            console.log("Delete activity succeeded:", JSON.stringify(data, null, 2));
+            resolve();
+        });
+    });
 }
 
 // End activity functions
@@ -296,6 +338,27 @@ dbHelper.prototype.queryMedication = (medication, userID) => {
     return Promise.all(promiseList).then(result => result.pop());
 }
 
+dbHelper.prototype.removeMedication = (medication, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_MOVIE,
+            Key: {
+                "userId": userID,
+                "medicationName": medication.name
+            },
+            ConditionExpression: "attribute_exists(medicationName)"
+        };
+        docClient.delete(params, (err, data) => {
+            if(err) {
+                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2))
+            }
+            console.log("Delete medication succeeded:", JSON.stringify(data, null, 2));
+            resolve();
+        });
+    });
+}
+
 // End medication functions
 
 // Start familyMember functions
@@ -367,6 +430,27 @@ dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) =
     });
     promiseList.push(promise);
     return Promise.all(promiseList).then(result => result.pop());
+}
+
+dbHelper.prototype.removeFamilyMember = (familyMember, userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: TABLE_MOVIE,
+            Key: {
+                "userId": userID,
+                "familyMemberName": familyMember.name
+            },
+            ConditionExpression: "attribute_exists(familyMemberName)"
+        };
+        docClient.delete(params, (err, data) => {
+            if(err) {
+                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2))
+            }
+            console.log("Delete familyMember succeeded:", JSON.stringify(data, null, 2));
+            resolve();
+        });
+    });
 }
 
 // End familyMember functions
