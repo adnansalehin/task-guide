@@ -9,6 +9,7 @@ const TABLE_MOVIE = "movie-bank";
 const TABLE_ACTIVITY = "activity-store";
 const TABLE_MEDICATION = "medication-store";
 const TABLE_FAMILY = "family-store";
+
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
@@ -38,84 +39,6 @@ const InProgressAddMovieIntentHandler = {
       .getResponse();
   }
 }
-
-const InProgressAddMemoryIntentHandler = {
-  canHandle(handlerInput) {
-    const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest' &&
-      request.intent.name === 'AddMemoryIntent' &&
-      request.dialogState !== 'COMPLETED';
-  },
-  handle(handlerInput) {
-    const currentIntent = handlerInput.requestEnvelope.request.intent;
-    return handlerInput.responseBuilder
-      .addDelegateDirective(currentIntent)
-      .getResponse();
-  }
-}
-
-const AddMemoryIntentHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'AddMemoryIntent';
-  },
-  async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    const slots = handlerInput.requestEnvelope.request.intent.slots;
-    const memory = {
-      question: slots.MemoryQuestion.value,
-      answer: slots.MemoryAnswer.value
-    };
-    console.log(slots);
-    return dbHelper.addMemory(memory, userID)
-      .then((data) => {
-        const speechText = "You have successfully added that memory. You can say add memory to add another one or remove memory to remove a memory";
-        return responseBuilder
-          .speak(speechText)
-          .reprompt(GENERAL_REPROMPT)
-          .getResponse();
-      })
-      .catch((err) => {
-        console.log("An error occured while saving your memory", err);
-        const speechText = "we could not save your memory right now. Please try again!"
-        return responseBuilder
-          .speak(speechText)
-          .getResponse();
-      })
-  },
-};
-
-const QueryMemoryIntentHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'QueryMemoryIntent';
-  },
-  async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    const slots = handlerInput.requestEnvelope.request.intent.slots;
-    const memory = {
-      question: slots.MemoryQuestion.value,
-    };
-    console.log(slots);
-    return dbHelper.queryMemory(memory, userID)
-      .then(data => {
-        const speechText = data.memoryAnswer || "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory";
-        return responseBuilder
-          .speak(speechText)
-          .reprompt(GENERAL_REPROMPT)
-          .getResponse();
-      })
-      .catch((err) => {
-        console.log("An error occured while retrieving your memory", err);
-        const speechText = "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory"
-        return responseBuilder
-          .speak(speechText)
-          .getResponse();
-      })
-  },
-};
 
 const AddMovieIntentHandler = {
   canHandle(handlerInput) {
@@ -218,6 +141,117 @@ const RemoveMovieIntentHandler = {
   }
 }
 
+//memory intents
+
+const InProgressAddMemoryIntentHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddMemoryIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+const AddMemoryIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddMemoryIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const memory = {
+      question: slots.MemoryQuestion.value,
+      answer: slots.MemoryAnswer.value
+    };
+    console.log(slots);
+    return dbHelper.addMemory(memory, userID)
+      .then((data) => {
+        const speechText = "You have successfully added that memory. You can say add memory to add another one or remove memory to remove a memory";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while saving your memory", err);
+        const speechText = "we could not save your memory right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const QueryMemoryIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'QueryMemoryIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const memory = {
+      question: slots.MemoryQuestion.value,
+    };
+    console.log(slots);
+    return dbHelper.queryMemory(memory, userID)
+      .then(data => {
+        const speechText = data.memoryAnswer || "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your memory", err);
+        const speechText = "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const EditMemoryIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'EditMemoryIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const memory = {
+      question: slots.MemoryQuestion.value,
+      answer: slots.MemoryAnswer.value
+    };
+    return dbHelper.editMemory(memory, userID)
+      .then(data => {
+        const speechText = "Saved! ${data.memoryAnswer} is now the answer for {memory.question}";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your memory", err);
+        const speechText = "Sorry I couldn't find an answer to that memory. Try saying add memory to add that memory"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
 const HelpIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
@@ -268,7 +302,7 @@ const ErrorHandler = {
 
     return handlerInput.responseBuilder
       .speak('Sorry, I can\'t understand the command. Please say again.')
-      .reprompt('Sorry, I can\'t understand the command. Please say again.')
+      .reprompt('Sorry, I can\'t understand the command. You can say help to find out more commands.')
       .getResponse();
   },
 };
@@ -281,6 +315,7 @@ exports.handler = skillBuilder
     InProgressAddMemoryIntentHandler,
     AddMemoryIntentHandler,
     QueryMemoryIntentHandler,
+    EditMemoryIntentHandler,
     InProgressAddMovieIntentHandler,
     AddMovieIntentHandler,
     GetMoviesIntentHandler,

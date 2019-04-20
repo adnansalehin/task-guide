@@ -188,7 +188,7 @@ dbHelper.prototype.editMemory = (memory, userID) => {
                             itemFound = true;
                             const params = {
                                 TableName: TABLE_MEMORY,
-                                Item: {
+                                Key: {
                                   'memoryQuestion' : item.memoryQuestion,
                                   'userId': userID
                                 },
@@ -199,13 +199,13 @@ dbHelper.prototype.editMemory = (memory, userID) => {
                                 ReturnValues:"UPDATED_NEW"
                             };
                             
-                            docClient.update(params, (err, data) => {
+                            docClient.update(params, (err, updateData) => {
                                 if(err) {
                                     console.error("Unable to update memory table. Error JSON:", JSON.stringify(err, null, 2));
                                     return reject(JSON.stringify(err, null, 2));
                                 }
-                                console.log("Updated memory data, ", JSON.stringify(data));
-                                resolve(data);
+                                console.log("Updated memory data, ", JSON.stringify(updateData));
+                                resolve(updateData.Attributes);
                             });
                             // resolve(item);
                         }
@@ -345,7 +345,7 @@ dbHelper.prototype.editActivity = (activity, userID) => {
                             itemFound = true;
                             const params = {
                                 TableName: TABLE_ACTIVITY,
-                                Item: {
+                                Key: {
                                   'activityQuestion' : item.activityQuestion,
                                   'userId': userID
                                 },
@@ -356,13 +356,13 @@ dbHelper.prototype.editActivity = (activity, userID) => {
                                 ReturnValues:"UPDATED_NEW"
                             };
                             
-                            docClient.update(params, (err, data) => {
+                            docClient.update(params, (err, updateData) => {
                                 if(err) {
                                     console.error("Unable to update activity table. Error JSON:", JSON.stringify(err, null, 2));
                                     return reject(JSON.stringify(err, null, 2));
                                 }
-                                console.log("Updated activity data, ", JSON.stringify(data));
-                                resolve(data);
+                                console.log("Updated activity data, ", JSON.stringify(updateData));
+                                resolve(updateData.Attributes);
                             });
                             // resolve(item);
                         }
@@ -730,12 +730,12 @@ const populateKeywordList = (wordList, textInput) => {
 
 const translateEnglishUStoEnglishUK = text => {
     const translateAmerican = translator.translate(text, { american: true });
-
-    translateAmerican[1].forEach(word => {
-        usWord = Object.keys(word)[0];
-        ukWord = word[usWord].details;
-        text = text.replace(usWord, ukWord);
-    });
+    if(translateAmerican[1]) 
+        translateAmerican[1].forEach(word => {
+            usWord = Object.keys(word)[0];
+            ukWord = word[usWord].details;
+            text = text.replace(usWord, ukWord);
+        });
     return text;
 }
 
