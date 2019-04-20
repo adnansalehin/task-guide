@@ -3,7 +3,8 @@
 
 const Alexa = require('ask-sdk');
 const dbHelper = require('./helpers/dbHelper');
-const GENERAL_REPROMPT = "What would you like to do?";
+const GENERAL_REPROMPT = "What would you like to do next?";
+const GENERAL_HELP_REPROMPT = "What would you like to do?";
 const TABLE_MEMORY = "memory-bank";
 const TABLE_MOVIE = "movie-bank";
 const TABLE_ACTIVITY = "activity-store";
@@ -38,7 +39,7 @@ const InProgressAddMovieIntentHandler = {
       .addDelegateDirective(currentIntent)
       .getResponse();
   }
-}
+};
 
 const AddMovieIntentHandler = {
   canHandle(handlerInput) {
@@ -96,7 +97,7 @@ const GetMoviesIntentHandler = {
           .getResponse();
       })
   }
-}
+};
 
 const InProgressRemoveMovieIntentHandler = {
   canHandle(handlerInput) {
@@ -111,7 +112,7 @@ const InProgressRemoveMovieIntentHandler = {
       .addDelegateDirective(currentIntent)
       .getResponse();
   }
-}
+};
 
 const RemoveMovieIntentHandler = {
   canHandle(handlerInput) {
@@ -139,7 +140,7 @@ const RemoveMovieIntentHandler = {
           .getResponse();
       })
   }
-}
+};
 
 //memory intents
 
@@ -156,7 +157,7 @@ const InProgressAddMemoryIntentHandler = {
       .addDelegateDirective(currentIntent)
       .getResponse();
   }
-}
+};
 
 const AddMemoryIntentHandler = {
   canHandle(handlerInput) {
@@ -283,17 +284,94 @@ const RemoveMemoryIntentHandler = {
 
 //end memory intents
 
+//user help intents
+
+const MoviesHelpIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'MoviesHelpIntent';
+  },
+  handle(handlerInput) {
+    const speechText = "Welcome to the favourite movies feature... You can say add movie to add a new movie... get movies to help you remember all your favorite movies... or say delete movie to delete a movie";
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(GENERAL_HELP_REPROMPT)
+      .getResponse();
+  },
+};
+
+const MemoriesHelpIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'MemoriesHelpIntent';
+  },
+  handle(handlerInput) {
+    const speechText = "Welcome to the memories feature... You can say add memory to add a new memory... chnage memory to change an existing memory... delete memory to delete a memory or say remind me to help you remember a memory";
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(GENERAL_HELP_REPROMPT)
+      .getResponse();
+  },
+};
+
+const ActivitiesHelpIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'ActivitiesHelpIntent';
+  },
+  handle(handlerInput) {
+    const speechText = "Welcome to the favourite activities feature... You can say add activity to add a new activity... edit activity to change the steps for an activity... get activity to help you remember the steps... or say delete activity to delete an activity";
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(GENERAL_HELP_REPROMPT)
+      .getResponse();
+  },
+};
+
+const MedicationHelpIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'MedicationHelpIntent';
+  },
+  handle(handlerInput) {
+    const speechText = "Welcome to the favourite medication feature... You can say add medicine to add a new medicine... edit medicine to change the details for a medicine... get medicine to help you remember the details... or say delete medicine to delete a medicine";
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(GENERAL_HELP_REPROMPT)
+      .getResponse();
+  },
+};
+
+const FamilyHelpIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'FamilyHelpIntent';
+  },
+  handle(handlerInput) {
+    const speechText = "Welcome to the favourite family and friends feature... You can say add family member to add a new family member... edit family member to change the details for a family member... get family member to help you remember the details... or say delete family member to delete a family member... You can also use the word friend instead of family member for these commands";
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(GENERAL_HELP_REPROMPT)
+      .getResponse();
+  },
+};
+
 const HelpIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'You can add memories or ask about your stored memories';
+    const speechText = "This skill offers five distict features. memories... activities... movies... medication... and family.. You can add, change, help you recall or delete information about all of these.";
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .reprompt(GENERAL_REPROMPT)
+      .reprompt(GENERAL_HELP_REPROMPT)
       .getResponse();
   },
 };
@@ -353,6 +431,11 @@ exports.handler = skillBuilder
     GetMoviesIntentHandler,
     InProgressRemoveMovieIntentHandler,
     RemoveMovieIntentHandler,
+    MoviesHelpIntentHandler,
+    MemoriesHelpIntentHandler,
+    ActivitiesHelpIntentHandler,
+    MedicationHelpIntentHandler,
+    FamilyHelpIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler
