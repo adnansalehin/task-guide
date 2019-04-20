@@ -129,7 +129,7 @@ const AddMovieIntentHandler = {
     const movieName = slots.MovieName.value;
     return dbHelper.addMovie(movieName, userID)
       .then((data) => {
-        const speechText = `You have added movie ${movieName}. You can say add to add another one or remove to remove movie`;
+        const speechText = "You have added movie ${movieName}. You can say add movie to add another one or remove movie to remove a movie";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -202,14 +202,14 @@ const RemoveMovieIntentHandler = {
     const movieName = slots.MovieName.value;
     return dbHelper.removeMovie(movieName, userID)
       .then((data) => {
-        const speechText = `You have removed movie with name ${movieName}, you can add another one by saying add`
+        const speechText = "You have removed movie with name ${movieName}"
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
           .getResponse();
       })
       .catch((err) => {
-        const speechText = `You do not have movie with name ${movieName}, you can add it by saying add`
+        const speechText = "You don't have ${movieName} in your list of movies"
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -253,7 +253,7 @@ const SessionEndedRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
   },
   handle(handlerInput) {
-    console.log(`Session ended with reason: ${handlerInput.requestEnvelope.request.reason}`);
+    console.log("Session ended with reason: ${handlerInput.requestEnvelope.request.reason}");
 
     return handlerInput.responseBuilder.getResponse();
   },
@@ -264,7 +264,7 @@ const ErrorHandler = {
     return true;
   },
   handle(handlerInput, error) {
-    console.log(`Error handled: ${error.message}`);
+    console.log("Error handled: ${error.message}");
 
     return handlerInput.responseBuilder
       .speak('Sorry, I can\'t understand the command. Please say again.')
@@ -291,10 +291,10 @@ exports.handler = skillBuilder
     SessionEndedRequestHandler
   )
   .addErrorHandlers(ErrorHandler)
-  .withTableName(TABLE_ACTIVITY)
-  .withTableName(TABLE_FAMILY)
-  .withTableName(TABLE_MEDICATION)
-  .withTableName(TABLE_MEMORY)
-  .withTableName(TABLE_MOVIE)
-  .withAutoCreateTable(true)
+  // .withTableName(TABLE_ACTIVITY)
+  // .withTableName(TABLE_FAMILY)
+  // .withTableName(TABLE_MEDICATION)
+  // .withTableName(TABLE_MEMORY)
+  // .withTableName(TABLE_MOVIE)
+  // .withAutoCreateTable(true)
   .lambda();

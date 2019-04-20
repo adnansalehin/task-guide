@@ -3,6 +3,7 @@ const retext = require('retext')
 const keywords = require("retext-keywords");
 const toString = require('nlcst-to-string');
 const unirest = require('unirest');
+const translator = require('american-british-english-translator');
 
 AWS.config.update({region: "us-east-1"});
 const TABLE_MEMORY = "memory-bank";
@@ -20,6 +21,7 @@ const QUESTION_WORDS = [
 // Start movie functions
 
 dbHelper.prototype.addMovie = (movie, userID) => {
+    // checkTableExists(TABLE_MOVIE, getNewMovieTableParams()).then(()=>{});
     return new Promise((resolve, reject) => {
         const params = {
             TableName: TABLE_MOVIE,
@@ -312,6 +314,72 @@ dbHelper.prototype.queryActivity = (activity, userID) => {
     return Promise.all(promiseList).then(result => result.pop());
 }
 
+dbHelper.prototype.editActivity = (activity, userID) => {
+        
+    const params = {
+        TableName: TABLE_ACTIVITY,
+        KeyConditionExpression: "#userID = :_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId",
+        },
+        ExpressionAttributeValues: {
+            ":_id": userID,
+        }
+    };
+
+    let itemFound = false;
+    const promiseList = [];
+    const promise = new Promise((resolve, reject) => {
+
+        docClient.query(params, (err, data) => {
+            if(err) {
+                console.error("Unable to read activity table. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2));
+            }
+            //go through each item in the database to find a match
+            let i=1;
+            data.Items.forEach(item => {
+                promiseList.push(checkTextMatch(item.activityQuestion, activity.question)
+                    .then(match => {
+                        if(match) {
+                            itemFound = true;
+                            const params = {
+                                TableName: TABLE_ACTIVITY,
+                                Item: {
+                                  'activityQuestion' : item.activityQuestion,
+                                  'userId': userID
+                                },
+                                UpdateExpression: "set activityAnswer = :answer",
+                                ExpressionAttributeValues:{
+                                    ":answer":activity.answer
+                                },
+                                ReturnValues:"UPDATED_NEW"
+                            };
+                            
+                            docClient.update(params, (err, data) => {
+                                if(err) {
+                                    console.error("Unable to update activity table. Error JSON:", JSON.stringify(err, null, 2));
+                                    return reject(JSON.stringify(err, null, 2));
+                                }
+                                console.log("Updated activity data, ", JSON.stringify(data));
+                                resolve(data);
+                            });
+                            // resolve(item);
+                        }
+                        if(!itemFound && i >= data.Items.length) {
+                            console.log("ITEM NOT FOUND");
+                            resolve(false);
+                        }
+                        i++;
+                    })
+                );
+            });
+        });
+    });
+    promiseList.push(promise);
+    return Promise.all(promiseList).then(result => result.pop());
+}
+
 dbHelper.prototype.removeActivity = (activity, userID) => {
     return new Promise((resolve, reject) => {
         const params = {
@@ -537,6 +605,51 @@ const getFamilyDBText = (item, attributeName) => {
     }
 }
 
+const getNewMovieTableParams = () => {
+    const params = {
+        AttributeDefinitions: [
+            {
+                AttributeName: "userId", 
+                AttributeType: "S"
+            }, 
+            {
+                AttributeName: "movieTitle", 
+                AttributeType: "S"
+            }
+        ], 
+        KeySchema: [
+            {
+                AttributeName: "userId", 
+                KeyType: "HASH"
+            }, 
+            {
+                AttributeName: "movieTitle", 
+                KeyType: "RANGE"
+            }
+        ], 
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5, 
+            WriteCapacityUnits: 5
+        }, 
+        TableName: TABLE_MOVIE
+    };
+    return params;
+}
+
+const checkTableExists = (tableName, newTableParams) => docClient.listTables({})
+.promise()
+.then((data) => {
+    const exists = data.TableNames
+        .filter(name => {
+            return name === tableName;
+        })
+        .length > 0;
+    if (exists)
+        return Promise.resolve();
+    else
+        return dynamodb.createTable(newTableParams).promise();
+});
+
 //Text/Sentence matching function
 const checkTextMatch = (dbText, utteredText) => {
     
@@ -600,9 +713,11 @@ const applySynonymCheck = (kList, kList2) => {
 }
 
 const populateKeywordList = (wordList, textInput) => {
+    const translatedText = translateEnglishUStoEnglishUK(textInput);
+
     retext()
     .use(keywords)
-    .process(textInput, (err, text) => {
+    .process(translatedText, (err, text) => {
         if(err) {
             console.error("Failed to extract keywords");
         } else {
@@ -611,6 +726,17 @@ const populateKeywordList = (wordList, textInput) => {
             });
         }
     });
+}
+
+const translateEnglishUStoEnglishUK = text => {
+    const translateAmerican = translator.translate(text, { american: true });
+
+    translateAmerican[1].forEach(word => {
+        usWord = Object.keys(word)[0];
+        ukWord = word[usWord].details;
+        text = text.replace(usWord, ukWord);
+    });
+    return text;
 }
 
 const applyDiceAndCosineSimilarity = (string1, string2) => {
