@@ -36,7 +36,7 @@ dbHelper.prototype.addMovie = (movie, userID) => {
                 console.error("Unable to insert movie", JSON.stringify(err))
                 return reject("Unable to add movie");
             }
-            console.log("Saved Data, ", JSON.stringify(data));
+            console.log("Added new movie");
             resolve(data);
         });
     });
