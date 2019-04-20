@@ -284,6 +284,198 @@ const RemoveMemoryIntentHandler = {
 
 //end memory intents
 
+//activity intents
+
+// multi step activity, not working
+// let addSteps = [];
+// const InProgressAddActivityIntentHandler = {
+//   canHandle(handlerInput) {
+//     console.log("YES NO Value:");
+//     console.log(handlerInput.requestEnvelope.request.intent.slots.YesNoSlot.value);
+//     const request = handlerInput.requestEnvelope.request;
+//     if(handlerInput.requestEnvelope.request.intent.slots.ActivitySteps.value){
+//       addSteps.push(handlerInput.requestEnvelope.request.intent.slots.ActivitySteps.value);
+//       console.log("Tried to add steps");
+//       console.log(addSteps);
+//     }
+//     return request.type === 'IntentRequest' &&
+//       request.intent.name === 'AddActivityIntent' &&
+//       handlerInput.requestEnvelope.request.intent.slots.ActivityTitle.value &&
+//       handlerInput.requestEnvelope.request.intent.slots.ActivitySteps.value &&
+//       handlerInput.requestEnvelope.request.intent.slots.YesNoSlot.value === 'no' && handlerInput.requestEnvelope.request.dialogState !== "COMPLETED";
+//   },
+//   handle(handlerInput) {
+//     // const currentIntent = handlerInput.requestEnvelope.request.intent;
+//     return handlerInput.responseBuilder
+//     .speak('Next step?')
+//     .reprompt('Say finished if you are done adding all the steps.')
+//     .addElicitSlotDirective('ActivitySteps')
+//     .getResponse();
+//   }
+// };
+
+// const AddActivityIntentHandler = {
+//   canHandle(handlerInput) {
+//     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+//       && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent';
+//   },
+//   async handle(handlerInput) {
+//     const { responseBuilder } = handlerInput;
+//     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+//     const slots = handlerInput.requestEnvelope.request.intent.slots;
+//     const activity = {
+//       title: slots.ActivityTitle.value,
+//       steps: addSteps
+//     };
+//     console.log("Slot values:");
+//     console.log(slots);
+//     console.log("Step values:");
+//     console.log(addSteps);
+
+//     return dbHelper.addActivity(activity, userID)
+//       .then((data) => {
+//         const speechText = "You have successfully added that activity. You can say add activity to add another one or remove activity to remove an activity";
+//         return responseBuilder
+//           .speak(speechText)
+//           .reprompt(GENERAL_REPROMPT)
+//           .getResponse();
+//       })
+//       .catch((err) => {
+//         console.log("An error occured while saving activity", err);
+//         const speechText = "Sorry, I could not save your activity right now. Please try again!"
+//         return responseBuilder
+//           .speak(speechText)
+//           .getResponse();
+//       })
+//   },
+// };
+
+const AddActivityIntentHandler = {
+    canHandle(handlerInput) {
+      return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+        && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent';
+    },
+    async handle(handlerInput) {
+      const { responseBuilder } = handlerInput;
+      const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+      const slots = handlerInput.requestEnvelope.request.intent.slots;
+      const activity = {
+        title: slots.ActivityTitle.value,
+        steps: slots.ActivitySteps.value
+      };
+  
+      return dbHelper.addActivity(activity, userID)
+        .then((data) => {
+          const speechText = "You have successfully added that activity. You can say add activity to add another one or remove activity to remove an activity";
+          return responseBuilder
+            .speak(speechText)
+            .reprompt(GENERAL_REPROMPT)
+            .getResponse();
+        })
+        .catch((err) => {
+          console.log("An error occured while saving activity", err);
+          const speechText = "Sorry, I could not save your activity right now. Please try again!"
+          return responseBuilder
+            .speak(speechText)
+            .getResponse();
+        })
+    },
+  };
+
+const QueryActivityIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'QueryActivityIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const activity = {
+      title: slots.ActivityTitle.value,
+    };
+    return dbHelper.queryActivity(activity, userID)
+      .then(data => {
+        const speechText = data.activitySteps || "Sorry I couldn't find the steps to that activity. Try saying add activity to add that activity";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your activity", err);
+        const speechText = "Sorry I couldn't find the steps to that activity. Try saying add activity to add that activity"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const EditActivityIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'EditActivityIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const activity = {
+      title: slots.ActivityTitle.value,
+      steps: slots.ActivitySteps.value
+    };
+    return dbHelper.editActivity(activity, userID)
+      .then(data => {
+        const speechText = "Saved changes! " + data.activitySteps + " is now the steps for " + activity.title;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your activity", err);
+        const speechText = "Sorry I couldn't find that activity. Try saying add activity to add that activity"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const RemoveActivityIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'RemoveActivityIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const activity = {
+      title: slots.ActivityTitle.value
+    };
+    return dbHelper.removeActivity(activity, userID)
+      .then(data => {
+        const speechText = "Successfully deleted activity with title " + activity.title;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your activity", err);
+        const speechText = "Sorry, I couldn't delete that activity."
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+//end activity intents
+
+
 //user help intents
 
 const MoviesHelpIntentHandler = {
@@ -431,6 +623,11 @@ exports.handler = skillBuilder
     GetMoviesIntentHandler,
     InProgressRemoveMovieIntentHandler,
     RemoveMovieIntentHandler,
+    // InProgressAddActivityIntentHandler,
+    AddActivityIntentHandler,
+    QueryActivityIntentHandler,
+    EditActivityIntentHandler,
+    RemoveActivityIntentHandler,
     MoviesHelpIntentHandler,
     MemoriesHelpIntentHandler,
     ActivitiesHelpIntentHandler,
