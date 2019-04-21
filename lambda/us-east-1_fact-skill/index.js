@@ -5,11 +5,6 @@ const Alexa = require('ask-sdk');
 const dbHelper = require('./helpers/dbHelper');
 const GENERAL_REPROMPT = "What would you like to do next?";
 const GENERAL_HELP_REPROMPT = "What would you like to do?";
-const TABLE_MEMORY = "memory-bank";
-const TABLE_MOVIE = "movie-bank";
-const TABLE_ACTIVITY = "activity-store";
-const TABLE_MEDICATION = "medication-store";
-const TABLE_FAMILY = "family-store";
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
@@ -889,6 +884,14 @@ exports.handler = skillBuilder
     QueryActivityIntentHandler,
     EditActivityIntentHandler,
     RemoveActivityIntentHandler,
+    AddMedicationIntentHandler,
+    QueryMedicationIntentHandler,
+    EditMedicationIntentHandler,
+    RemoveMedicationIntentHandler,
+    AddFamilyMemberIntentHandler,
+    QueryFamilyMemberIntentHandler,
+    EditFamilyMemberIntentHandler,
+    RemoveFamilyMemberIntentHandler,
     MoviesHelpIntentHandler,
     MemoriesHelpIntentHandler,
     ActivitiesHelpIntentHandler,
@@ -899,10 +902,4 @@ exports.handler = skillBuilder
     SessionEndedRequestHandler
   )
   .addErrorHandlers(ErrorHandler)
-  // .withTableName(TABLE_ACTIVITY)
-  // .withTableName(TABLE_FAMILY)
-  // .withTableName(TABLE_MEDICATION)
-  // .withTableName(TABLE_MEMORY)
-  // .withTableName(TABLE_MOVIE)
-  // .withAutoCreateTable(true)
   .lambda();
