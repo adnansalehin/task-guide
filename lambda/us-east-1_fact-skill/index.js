@@ -351,36 +351,36 @@ const RemoveMemoryIntentHandler = {
 // };
 
 const AddActivityIntentHandler = {
-    canHandle(handlerInput) {
-      return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-        && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent';
-    },
-    async handle(handlerInput) {
-      const { responseBuilder } = handlerInput;
-      const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-      const slots = handlerInput.requestEnvelope.request.intent.slots;
-      const activity = {
-        title: slots.ActivityTitle.value,
-        steps: slots.ActivitySteps.value
-      };
-  
-      return dbHelper.addActivity(activity, userID)
-        .then((data) => {
-          const speechText = "You have successfully added that activity. You can say add activity to add another one or remove activity to remove an activity";
-          return responseBuilder
-            .speak(speechText)
-            .reprompt(GENERAL_REPROMPT)
-            .getResponse();
-        })
-        .catch((err) => {
-          console.log("An error occured while saving activity", err);
-          const speechText = "Sorry, I could not save your activity right now. Please try again!"
-          return responseBuilder
-            .speak(speechText)
-            .getResponse();
-        })
-    },
-  };
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent';
+  },
+  async handle(handlerInput) {
+    const { responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const activity = {
+      title: slots.ActivityTitle.value,
+      steps: slots.ActivitySteps.value
+    };
+
+    return dbHelper.addActivity(activity, userID)
+      .then((data) => {
+        const speechText = "You have successfully added that activity. You can say add activity to add another one or remove activity to remove an activity";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while saving activity", err);
+        const speechText = "Sorry, I could not save your activity right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
 
 const QueryActivityIntentHandler = {
   canHandle(handlerInput) {
@@ -475,6 +475,264 @@ const RemoveActivityIntentHandler = {
 
 //end activity intents
 
+//start medication intents
+
+const AddMedicationIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddMedicationIntent';
+  },
+  async handle(handlerInput) {
+    const { responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const medication = {
+      name: slots.MedicationName.value,
+      frequency: slots.MedicationFrequency.value,
+      dosage: slots.MedicationDosage.value
+    };
+
+    return dbHelper.addMedication(medication, userID)
+      .then((data) => {
+        const speechText = "You have successfully added that medication information. You can say add medication to add another one... If the steps to adminster this medicine is too complicated, you can add an activity for it with the steps described";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while saving medication details", err);
+        const speechText = "Sorry, I could not save your medication details right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const QueryMedicationIntentHandler = {
+canHandle(handlerInput) {
+  return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+    && handlerInput.requestEnvelope.request.intent.name === 'QueryMedicationIntent';
+},
+async handle(handlerInput) {
+  const {responseBuilder } = handlerInput;
+  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+  const slots = handlerInput.requestEnvelope.request.intent.slots;
+  const medication = {
+    name: slots.MedicationName.value,
+  };
+  return dbHelper.queryMedication(medication, userID)
+    .then(data => {
+      const speechText = "You should take " + data.medicationName + "... " + data.medicationFrequency + " follwing these steps..." + data.medicationSteps || "Sorry I couldn't find that medicine. Try saying add medication to add that medicine";
+      return responseBuilder
+        .speak(speechText)
+        .reprompt(GENERAL_REPROMPT)
+        .getResponse();
+    })
+    .catch((err) => {
+      console.log("An error occured while retrieving your medication", err);
+      const speechText = "Sorry I couldn't find that medicine. Try saying add medication to add that medicine"
+      return responseBuilder
+        .speak(speechText)
+        .getResponse();
+    })
+},
+};
+
+const EditMedicationIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'EditMedicationIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const medication = {
+      name: slots.MedicationName.value,
+      frequency: slots.MedicationFrequency.value,
+      dosage: slots.MedicationDosage.value
+    };
+    return dbHelper.editMedication(medication, userID)
+      .then(data => {
+        const speechText = "Successfully saved changes for " + medication.name;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your medication", err);
+        const speechText = "Sorry I couldn't find that medication. Try saying add medication to add that medication"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const RemoveMedicationIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'RemoveMedicationIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const medication = {
+      name: slots.MedicationName.value
+    };
+    return dbHelper.removeMedication(medication, userID)
+      .then(data => {
+        const speechText = "Successfully deleted medication with name " + medication.name;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your medication", err);
+        const speechText = "Sorry, I couldn't delete that medication."
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+//end medication intents
+
+//start family member intents
+
+const AddFamilyMemberIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddFamilyMemberIntent';
+  },
+  async handle(handlerInput) {
+    const { responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const familyMember = {
+      name: slots.FamilyMemberName.value,
+      relationship: slots.FamilyMemberRelationship.value,
+      fact: slots.FamilyMemberFact.value
+    };
+
+    return dbHelper.addFamilyMember(familyMember, userID)
+      .then((data) => {
+        const speechText = "You have successfully added that familyMember. You can say add familyMember to add another one or remove familyMember to remove an familyMember";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while saving familyMember", err);
+        const speechText = "Sorry, I could not save your familyMember right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const QueryFamilyMemberIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'QueryFamilyMemberIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const familyMember = {
+      attributeName: slots.AttributeName.value, // name || relationship || fact
+      attributeValue: slots.AttributeValue.value,
+    };
+    return dbHelper.queryFamilyMember(attributeName, attributeValue, userID)
+      .then(data => {
+        const speechText = "The person you're thinking of is " + data.familyMemberName + "... who is your " + data.familyMemberRelationship;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your familyMember", err);
+        const speechText = "Sorry I couldn't find the steps to that familyMember. Try saying add familyMember to add that familyMember"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const EditFamilyMemberIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'EditFamilyMemberIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const familyMember = {
+      name: slots.FamilyMemberName.value,
+      relationship: slots.FamilyMemberRelationship.value,
+      fact: slots.FamilyMemberFact.value
+    };
+    return dbHelper.editFamilyMember(familyMember, userID)
+      .then(data => {
+        const speechText = "Successfully saved changes for " + familyMember.name;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your familyMember", err);
+        const speechText = "Sorry I couldn't find that familyMember. Try saying add familyMember to add that familyMember"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const RemoveFamilyMemberIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'RemoveFamilyMemberIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const familyMember = {
+      name: slots.FamilyMemberName.value
+    };
+    return dbHelper.removeFamilyMember(familyMember, userID)
+      .then(data => {
+        const speechText = "Successfully deleted familyMember with title " + familyMember.name;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your familyMember", err);
+        const speechText = "Sorry, I couldn't delete that familyMember."
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+//end family member intents
 
 //user help intents
 

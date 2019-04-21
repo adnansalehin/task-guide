@@ -499,12 +499,15 @@ dbHelper.prototype.removeMedication = (medication, userID) => {
 
 dbHelper.prototype.addFamilyMember = (familyMember, userID) => {
     return new Promise((resolve, reject) => {
+        let fact = "";
+        if(familyMember.fact)
+            fact = familyMember.fact
         const params = {
             TableName: TABLE_FAMILY,
             Item: {
               'familyMemberName' : familyMember.name,
               'familyMemberRelationship' : familyMember.relationship,
-              'familyMemberFact' : familyMember.fact,
+              'familyMemberFact' : fact,
               'userId': userID
             }
         };
