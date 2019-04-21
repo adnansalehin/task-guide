@@ -431,45 +431,57 @@ dbHelper.prototype.queryMedication = (medication, userID) => {
         
     const params = {
         TableName: TABLE_MEDICATION,
-        KeyConditionExpression: "#userID = :_id",
+        KeyConditionExpression: "#userID = :_id and #medicationName = :medicine",
         ExpressionAttributeNames: {
             "#userID": "userId",
+            "#medicationName": "medicationName"
         },
         ExpressionAttributeValues: {
             ":_id": userID,
+            ":medicine": medication.name
         }
     };
 
-    let itemFound = false;
-    const promiseList = [];
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
         docClient.query(params, (err, data) => {
             if(err) {
                 console.error("Unable to read medication table. Error JSON:", JSON.stringify(err, null, 2));
                 return reject(JSON.stringify(err, null, 2));
             }
-            //go through each item in the database to find a match
-            let i=1;
-            data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.medicationName, medication.name)
-                    .then(match => {
-                        if(match) {
-                            itemFound = true;
-                            resolve(item);
-                        }
-                        if(!itemFound && i >= data.Items.length) {
-                            console.log("ITEM NOT FOUND");
-                            resolve(false);
-                        }
-                        i++;
-                    })
-                );
-            });
+            console.log("Successfully queried and found medicine:", JSON.stringify(data, null, 2));
+            resolve(data.Items[0]);
         });
     });
-    promiseList.push(promise);
-    return Promise.all(promiseList).then(result => result.pop());
+}
+
+dbHelper.prototype.editMedication = (medication, userID) => {
+        
+    const params = {
+        TableName: TABLE_MEDICATION,
+        Key: {
+          'medicationName' : medication.name,
+          'userId': userID
+        },
+        UpdateExpression: "set medicationFrequency = :frequency and set medicationDosage = :dosage",
+        ExpressionAttributeValues:{
+            ":frequency": medication.frequency,
+            ":dosage": medication.dosage
+        },
+        ReturnValues:"UPDATED_NEW"
+    };
+
+    return new Promise((resolve, reject) => {
+
+        docClient.update(params, (err, updateData) => {
+            if(err) {
+                console.error("Unable to update medication table. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2));
+            }
+            console.log("Updated medication data, ", JSON.stringify(updateData));
+            resolve(updateData.Attributes);
+        });
+    });
 }
 
 dbHelper.prototype.removeMedication = (medication, userID) => {

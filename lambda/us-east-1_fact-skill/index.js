@@ -511,33 +511,33 @@ const AddMedicationIntentHandler = {
 };
 
 const QueryMedicationIntentHandler = {
-canHandle(handlerInput) {
-  return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-    && handlerInput.requestEnvelope.request.intent.name === 'QueryMedicationIntent';
-},
-async handle(handlerInput) {
-  const {responseBuilder } = handlerInput;
-  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-  const slots = handlerInput.requestEnvelope.request.intent.slots;
-  const medication = {
-    name: slots.MedicationName.value,
-  };
-  return dbHelper.queryMedication(medication, userID)
-    .then(data => {
-      const speechText = "You should take " + data.medicationName + "... " + data.medicationFrequency + " follwing these steps..." + data.medicationSteps || "Sorry I couldn't find that medicine. Try saying add medication to add that medicine";
-      return responseBuilder
-        .speak(speechText)
-        .reprompt(GENERAL_REPROMPT)
-        .getResponse();
-    })
-    .catch((err) => {
-      console.log("An error occured while retrieving your medication", err);
-      const speechText = "Sorry I couldn't find that medicine. Try saying add medication to add that medicine"
-      return responseBuilder
-        .speak(speechText)
-        .getResponse();
-    })
-},
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'QueryMedicationIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const medication = {
+      name: slots.MedicationName.value,
+    };
+    return dbHelper.queryMedication(medication, userID)
+      .then(data => {
+        const speechText = "You should take " + data.medicationName + "... " + data.medicationFrequency + " follwing these steps..." + data.medicationSteps || "Sorry I couldn't find that medicine. Try saying add medication to add that medicine";
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("An error occured while retrieving your medication", err);
+        const speechText = "Sorry I couldn't find that medicine. Try saying add medication to add that medicine"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
 };
 
 const EditMedicationIntentHandler = {
@@ -556,7 +556,10 @@ const EditMedicationIntentHandler = {
     };
     return dbHelper.editMedication(medication, userID)
       .then(data => {
-        const speechText = "Successfully saved changes for " + medication.name;
+        if(medication.name)
+          const speechText = "Successfully saved changes for " + medication.name;
+        else
+          const speechText = "You had not saved that medicine before. Try saying add medication to add it."
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -623,7 +626,7 @@ const AddFamilyMemberIntentHandler = {
 
     return dbHelper.addFamilyMember(familyMember, userID)
       .then((data) => {
-        const speechText = "You have successfully added that familyMember. You can say add familyMember to add another one or remove familyMember to remove an familyMember";
+        const speechText = "You have successfully added" + familyMember.name + ". You can say add family member or friend to add another person";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -631,7 +634,7 @@ const AddFamilyMemberIntentHandler = {
       })
       .catch((err) => {
         console.log("An error occured while saving familyMember", err);
-        const speechText = "Sorry, I could not save your familyMember right now. Please try again!"
+        const speechText = "Sorry, I could not save the family member or friend information. Please try again!"
         return responseBuilder
           .speak(speechText)
           .getResponse();
