@@ -411,6 +411,7 @@ dbHelper.prototype.addMedication = (medication, userID) => {
               'medicationName' : medication.name,
               'medicationDosage' : medication.dosage,
               'medicationFrequency' : medication.frequency,
+              'medicationTime': medication.time,
               'userId': userID
             }
         };
@@ -461,10 +462,11 @@ dbHelper.prototype.editMedication = (medication, userID) => {
           'medicationName' : medication.name,
           'userId': userID
         },
-        UpdateExpression: "set medicationFrequency = :frequency and set medicationDosage = :dosage",
+        UpdateExpression: "set medicationFrequency = :frequency and set medicationDosage = :dosage and set medicationTime = :time",
         ExpressionAttributeValues:{
             ":frequency": medication.frequency,
-            ":dosage": medication.dosage
+            ":dosage": medication.dosage,
+            "time": medication.time
         },
         ReturnValues:"UPDATED_NEW"
     };

@@ -345,10 +345,10 @@ const RemoveMemoryIntentHandler = {
 //   },
 // };
 
-const AddCustomActivityIntentHandler = {
+const AddActivityIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'AddCustomActivityIntent';
+      && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent';
   },
   async handle(handlerInput) {
     const { responseBuilder } = handlerInput;
@@ -484,7 +484,8 @@ const AddMedicationIntentHandler = {
     const medication = {
       name: slots.MedicationName.value,
       frequency: slots.MedicationFrequency.value,
-      dosage: slots.MedicationDosage.value
+      dosage: slots.MedicationDosage.value,
+      time: slots.MedicationTime.value     
     };
 
     return dbHelper.addMedication(medication, userID)
@@ -547,7 +548,8 @@ const EditMedicationIntentHandler = {
     const medication = {
       name: slots.MedicationName.value,
       frequency: slots.MedicationFrequency.value,
-      dosage: slots.MedicationDosage.value
+      dosage: slots.MedicationDosage.value,
+      time: slots.MedicationTime.value
     };
     return dbHelper.editMedication(medication, userID)
       .then(data => {
@@ -880,7 +882,7 @@ exports.handler = skillBuilder
     InProgressRemoveMovieIntentHandler,
     RemoveMovieIntentHandler,
     // InProgressAddActivityIntentHandler,
-    AddCustomActivityIntentHandler,
+    AddActivityIntentHandler,
     QueryActivityIntentHandler,
     EditActivityIntentHandler,
     RemoveActivityIntentHandler,
