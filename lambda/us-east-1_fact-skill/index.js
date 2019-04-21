@@ -345,10 +345,10 @@ const RemoveMemoryIntentHandler = {
 //   },
 // };
 
-const AddActivityIntentHandler = {
+const AddCustomActivityIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent';
+      && handlerInput.requestEnvelope.request.intent.name === 'AddCustomActivityIntent';
   },
   async handle(handlerInput) {
     const { responseBuilder } = handlerInput;
@@ -880,7 +880,7 @@ exports.handler = skillBuilder
     InProgressRemoveMovieIntentHandler,
     RemoveMovieIntentHandler,
     // InProgressAddActivityIntentHandler,
-    AddActivityIntentHandler,
+    AddCustomActivityIntentHandler,
     QueryActivityIntentHandler,
     EditActivityIntentHandler,
     RemoveActivityIntentHandler,
