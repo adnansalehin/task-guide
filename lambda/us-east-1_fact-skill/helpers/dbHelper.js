@@ -207,7 +207,6 @@ dbHelper.prototype.editMemory = (memory, userID) => {
                                 console.log("Updated memory data, ", JSON.stringify(updateData));
                                 resolve(updateData.Attributes);
                             });
-                            // resolve(item);
                         }
                         if(!itemFound && i >= data.Items.length) {
                             console.log("ITEM NOT FOUND");
@@ -364,7 +363,6 @@ dbHelper.prototype.editActivity = (activity, userID) => {
                                 console.log("Updated activity data, ", JSON.stringify(updateData));
                                 resolve(updateData.Attributes);
                             });
-                            // resolve(item);
                         }
                         if(!itemFound && i >= data.Items.length) {
                             console.log("ITEM NOT FOUND");
@@ -566,6 +564,77 @@ dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) =
                         if(match) {
                             itemFound = true;
                             resolve(item);
+                        }
+                        if(!itemFound && i >= data.Items.length) {
+                            console.log("ITEM NOT FOUND");
+                            resolve(false);
+                        }
+                        i++;
+                    })
+                );
+            });
+        });
+    });
+    promiseList.push(promise);
+    return Promise.all(promiseList).then(result => result.pop());
+}
+
+dbHelper.prototype.editFamilyMember = (familyMember, userID) => {
+        
+    const params = {
+        TableName: TABLE_FAMILY,
+        KeyConditionExpression: "#userID = :_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId",
+        },
+        ExpressionAttributeValues: {
+            ":_id": userID,
+        }
+    };
+
+    let itemFound = false;
+    const promiseList = [];
+    const promise = new Promise((resolve, reject) => {
+
+        docClient.query(params, (err, data) => {
+            if(err) {
+                console.error("Unable to read familyMember table. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2));
+            }
+            //go through each item in the database to find a match
+            let i=1;
+            data.Items.forEach(item => {
+                promiseList.push(checkTextMatch(item.familyMemberName, familyMember.name)
+                    .then(match => {
+                        if(match) {
+                            itemFound = true;
+                            let updateExpression = "";
+                            if(familyMember.fact)
+                                updateExpression = "set familyMemberRelationship = :relationship and familyMemberFact = :fact";
+                            else
+                                updateExpression = "set familyMemberRelationship = :relationship";
+                            const params = {
+                                TableName: TABLE_FAMILY,
+                                Key: {
+                                  'familyMemberName' : item.familyMemberName,
+                                  'userId': userID
+                                },
+                                UpdateExpression: updateExpression,
+                                ExpressionAttributeValues:{
+                                    ":relationship": familyMember.relationship,
+                                    ":fact": familyMember.fact
+                                },
+                                ReturnValues:"UPDATED_NEW"
+                            };
+                            
+                            docClient.update(params, (err, updateData) => {
+                                if(err) {
+                                    console.error("Unable to update familyMember table. Error JSON:", JSON.stringify(err, null, 2));
+                                    return reject(JSON.stringify(err, null, 2));
+                                }
+                                console.log("Updated familyMember data, ", JSON.stringify(updateData));
+                                resolve(updateData.Attributes);
+                            });
                         }
                         if(!itemFound && i >= data.Items.length) {
                             console.log("ITEM NOT FOUND");

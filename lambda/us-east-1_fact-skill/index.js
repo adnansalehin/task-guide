@@ -75,7 +75,7 @@ const GetMoviesIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'GetMoviesIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     return dbHelper.getMovies(userID)
       .then((data) => {
@@ -120,7 +120,7 @@ const RemoveMovieIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'RemoveMovieIntent';
   }, 
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const movieName = slots.MovieName.value;
@@ -165,7 +165,7 @@ const AddMemoryIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AddMemoryIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const memory = {
@@ -197,7 +197,7 @@ const QueryMemoryIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'QueryMemoryIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const memory = {
@@ -227,7 +227,7 @@ const EditMemoryIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'EditMemoryIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const memory = {
@@ -258,7 +258,7 @@ const RemoveMemoryIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'RemoveMemoryIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const memory = {
@@ -388,7 +388,7 @@ const QueryActivityIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'QueryActivityIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const activity = {
@@ -418,7 +418,7 @@ const EditActivityIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'EditActivityIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const activity = {
@@ -449,7 +449,7 @@ const RemoveActivityIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'RemoveActivityIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const activity = {
@@ -516,7 +516,7 @@ const QueryMedicationIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'QueryMedicationIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const medication = {
@@ -546,7 +546,7 @@ const EditMedicationIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'EditMedicationIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const medication = {
@@ -581,7 +581,7 @@ const RemoveMedicationIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'RemoveMedicationIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const medication = {
@@ -648,7 +648,7 @@ const QueryFamilyMemberIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'QueryFamilyMemberIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const familyMember = {
@@ -679,7 +679,7 @@ const EditFamilyMemberIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'EditFamilyMemberIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const familyMember = {
@@ -711,7 +711,7 @@ const RemoveFamilyMemberIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'RemoveFamilyMemberIntent';
   },
   async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
+    const { responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const familyMember = {
