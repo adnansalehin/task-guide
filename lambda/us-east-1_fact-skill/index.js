@@ -553,10 +553,11 @@ const EditMedicationIntentHandler = {
     };
     return dbHelper.editMedication(medication, userID)
       .then(data => {
+        let speechText = "";
         if(medication.name)
-          const speechText = "Successfully saved changes for " + medication.name;
+          speechText = "Successfully saved changes for " + medication.name;
         else
-          const speechText = "You had not saved that medicine before. Try saying add medication to add it."
+          speechText = "You had not saved that medicine before. Try saying add medication to add it."
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
