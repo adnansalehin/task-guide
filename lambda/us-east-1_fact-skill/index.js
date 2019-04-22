@@ -361,7 +361,7 @@ const AddActivityIntentHandler = {
 
     return dbHelper.addActivity(activity, userID)
       .then((data) => {
-        const speechText = "You have successfully added that activity. You can say add activity to add another one or remove activity to remove an activity";
+        const speechText = "You have successfully added that activity. You can say add activity to add another one";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -652,7 +652,7 @@ const QueryFamilyMemberIntentHandler = {
       attributeName: slots.AttributeName.value, // name || relationship || fact
       attributeValue: slots.AttributeValue.value,
     };
-    return dbHelper.queryFamilyMember(attributeName, attributeValue, userID)
+    return dbHelper.queryFamilyMember(familyMember.attributeName, familyMember.attributeValue, userID)
       .then(data => {
         const speechText = "The person you're thinking of is " + data.familyMemberName + "... who is your " + data.familyMemberRelationship;
         return responseBuilder
@@ -772,7 +772,7 @@ const ActivitiesHelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'ActivitiesHelpIntent';
   },
   handle(handlerInput) {
-    const speechText = "Welcome to the favourite activities feature... You can say add activity to add a new activity... edit activity to change the steps for an activity... get activity to help you remember the steps... or say delete activity to delete an activity";
+    const speechText = "Welcome to the activities feature... You can say add activity to add a new activity... edit activity to change the steps for an activity... get activity to help you remember the steps... or say delete activity to delete an activity";
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -787,7 +787,7 @@ const MedicationHelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'MedicationHelpIntent';
   },
   handle(handlerInput) {
-    const speechText = "Welcome to the favourite medication feature... You can say add medicine to add a new medicine... edit medicine to change the details for a medicine... get medicine to help you remember the details... or say delete medicine to delete a medicine";
+    const speechText = "Welcome to the medication feature... You can say add medicine to add a new medicine... edit medicine to change the details for a medicine... get medicine to help you remember the details... or say delete medicine to delete a medicine";
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -802,7 +802,7 @@ const FamilyHelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'FamilyHelpIntent';
   },
   handle(handlerInput) {
-    const speechText = "Welcome to the favourite family and friends feature... You can say add family member to add a new family member... edit family member to change the details for a family member... get family member to help you remember the details... or say delete family member to delete a family member... You can also use the word friend instead of family member for these commands";
+    const speechText = "Welcome to the family and friends feature... You can say add family member to add a new family member... edit family member to change the details for a family member... get family member to help you remember the details... or say delete family member to delete a family member... You can also use the word friend instead of family member for these commands";
 
     return handlerInput.responseBuilder
       .speak(speechText)
