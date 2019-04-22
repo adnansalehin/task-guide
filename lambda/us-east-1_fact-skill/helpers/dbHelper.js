@@ -833,13 +833,13 @@ const applyDiceAndCosineSimilarity = (string1, string2) => {
 
 // Cosine Similarity
 const consineSimilarity = (string1, string2) => {
-    const {commonTerms, termsInString1, termsInString2} = parseForSimilarity(string1, string2)
+    const { commonTerms, termsInString1, termsInString2 } = parseForSimilarity(string1, string2)
     return (commonTerms / (Math.pow(termsInString1, 0.5) * Math.pow(termsInString2, 0.5)) * 100).toFixed(2);
 }
 
 // Dice Similarity
 const diceSimilarity = (string1, string2) => {
-    const {commonTerms, termsInString1, termsInString2} = parseForSimilarity(string1, string2)    
+    const { commonTerms, termsInString1, termsInString2 } = parseForSimilarity(string1, string2)    
     return (((2 * commonTerms) / (termsInString1 + termsInString2)) * 100).toFixed(2);
 }
 
@@ -859,7 +859,7 @@ const parseForSimilarity = (string1, string2) => {
     allTokensSet = removeDuplicates(tempArr);
     const commonTerms = (termsInString1 + termsInString2) - allTokensSet.length;
     
-    return {commonTerms, termsInString1, termsInString2}
+    return { commonTerms, termsInString1, termsInString2 }
 }
 
 const cleanString = stringIn => {
