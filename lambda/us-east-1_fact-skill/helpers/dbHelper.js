@@ -5,18 +5,21 @@ const toString = require('nlcst-to-string');
 const unirest = require('unirest');
 const translator = require('american-british-english-translator');
 
-AWS.config.update({region: "us-east-1"});
 const TABLE_MEMORY = "memory-bank";
 const TABLE_MOVIE = "movie-bank";
 const TABLE_ACTIVITY = "activity-store";
 const TABLE_MEDICATION = "medication-store";
 const TABLE_FAMILY = "family-store";
-const dbHelper = function () { };
-const docClient = new AWS.DynamoDB.DocumentClient();
+
 const QUESTION_WORDS = [
     "what", "what's", "how", "how's", "when", "when's", "where", "where's",
     "who", "who's", "why", "why's"
 ]
+const RAPID_API_KEY = "6865f7788bmsh4f19be9d2d7d470p1e7111jsn3f116a171e48";
+
+const dbHelper = function () { };
+AWS.config.update({region: "us-east-1"});
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 // Start movie functions
 
@@ -775,7 +778,7 @@ const getSynonyms = word => {
     return new Promise((resolve, reject) => {
         unirest.get("https://wordsapiv1.p.mashape.com/words/" + word + "/synonyms")
             .header("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
-            .header("X-RapidAPI-Key", "6865f7788bmsh4f19be9d2d7d470p1e7111jsn3f116a171e48")
+            .header("X-RapidAPI-Key", RAPID_API_KEY)
             .end(function(result) {
                 resolve(result.body.synonyms);
             });
