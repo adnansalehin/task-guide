@@ -323,11 +323,11 @@ const QueryActivityIntentHandler = {
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const activity = {
-      title: slots.ActivityTitle.value,
+      name: slots.ActivityName.value,
     };
     return dbHelper.queryActivity(activity, userID)
       .then(data => {
-        const speechText = data.activitySteps || "Sorry I couldn't find the steps to that activity. Try saying add activity to add that activity";
+        const speechText = "The steps for the activity " + activity.name + " is " + data.activitySteps || "Sorry I couldn't find the steps to that activity. Try saying add activity to add that activity";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -353,12 +353,12 @@ const EditActivityIntentHandler = {
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const activity = {
-      title: slots.ActivityTitle.value,
+      name: slots.ActivityName.value,
       steps: slots.ActivitySteps.value
     };
     return dbHelper.editActivity(activity, userID)
       .then(data => {
-        const speechText = "Saved changes! " + data.activitySteps + " is now the steps for " + activity.title;
+        const speechText = "Saved changes! " + data.activitySteps + " is now the steps for " + activity.name;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -384,11 +384,11 @@ const RemoveActivityIntentHandler = {
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const activity = {
-      title: slots.ActivityTitle.value
+      name: slots.ActivityName.value
     };
     return dbHelper.removeActivity(activity, userID)
       .then(data => {
-        const speechText = "Successfully deleted activity with title " + activity.title;
+        const speechText = "Successfully deleted the activity " + activity.name;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -456,7 +456,7 @@ const QueryMedicationIntentHandler = {
     };
     return dbHelper.queryMedication(medication, userID)
       .then(data => {
-        const speechText = "You should take " + data.medicationName + "... " + data.medicationFrequency + " follwing these steps..." + data.medicationSteps || "Sorry I couldn't find that medicine. Try saying add medication to add that medicine";
+        const speechText = "You should take " + data.medicationName + "... " + data.medicationFrequency + " at " + data.medicationTime || "Sorry I couldn't find that medicine. Try saying add medication to add that medicine";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -658,7 +658,7 @@ const RemoveFamilyMemberIntentHandler = {
     };
     return dbHelper.removeFamilyMember(familyMember, userID)
       .then(data => {
-        const speechText = "Successfully deleted family member with title " + familyMember.name;
+        const speechText = "Successfully deleted " + familyMember.name + " from your list.";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
