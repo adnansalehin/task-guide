@@ -542,22 +542,33 @@ dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) =
     
     let condition;
     let expressionAttributeNames;
-    if(attributeName != "fact")
+    let expressionAttributeValues;
+    if(attributeName != "fact") {
         condition = "#userID = :_id and #attributeName = :attributeValue";
-    else
+        expressionAttributeNames = {
+            "#userID": "userId",
+            "#attributeName": getFamilyDBField(attributeName)
+        };
+        expressionAttributeValues = {
+            ":_id": userID,
+            ":attributeValue": attributeValue
+        };
+    }
+    else {
         condition = "#userID = :_id";
+        expressionAttributeNames = {
+            "#userID": "userId"
+        };
+        expressionAttributeValues = {
+            ":_id": userID
+        };
+    }
 
     const params = {
         TableName: TABLE_FAMILY,
         KeyConditionExpression: condition,
-        ExpressionAttributeNames: {
-            "#userID": "userId",
-            "#attributeName": getFamilyDBField(attributeName)
-        },
-        ExpressionAttributeValues: {
-            ":_id": userID,
-            ":attributeValue": attributeValue
-        }
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
     };
 
     let itemFound = false;
