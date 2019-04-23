@@ -636,17 +636,25 @@ dbHelper.prototype.editFamilyMember = (familyMember, userID) => {
                             itemFound = true;
                             let updateExpression;
                             let expressionAttributeValues;
+                            let expressionAttributeNames;
                             if(familyMember.fact != "later" && familyMember.fact != "add later") {
                                 updateExpression = "set #familyMemberRelationship = :relationship, #familyMemberFact = :fact";
                                 expressionAttributeValues = {
                                     ":relationship": familyMember.relationship,
                                     ":fact": familyMember.fact
                                 };
+                                expressionAttributeNames = {
+                                    "#familyMemberFact": "familyMemberFact",
+                                    "#familyMemberRelationship": "familyMemberRelationship"
+                                };
                             }
                             else {
                                 updateExpression = "set #familyMemberRelationship = :relationship";
                                 expressionAttributeValues = {
                                     ":relationship": familyMember.relationship
+                                };
+                                expressionAttributeNames = {
+                                    "#familyMemberRelationship": "familyMemberRelationship"
                                 };
                             }
                             const params = {
@@ -655,7 +663,9 @@ dbHelper.prototype.editFamilyMember = (familyMember, userID) => {
                                   'familyMemberName' : item.familyMemberName,
                                   'userId': userID
                                 },
+                                
                                 UpdateExpression: updateExpression,
+                                ExpressionAttributeNames: expressionAttributeNames,
                                 ExpressionAttributeValues: expressionAttributeValues,
                                 ReturnValues:"UPDATED_NEW"
                             };
