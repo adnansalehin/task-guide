@@ -624,7 +624,7 @@ const AddFamilyMemberIntentHandler = {
 
     return dbHelper.addFamilyMember(familyMember, userID)
       .then((data) => {
-        const speechText = "You have successfully added" + familyMember.name + ". You can say add family member or friend to add another person";
+        const speechText = "You have successfully added " + familyMember.name + ". You can say add family member or friend to add another person";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
