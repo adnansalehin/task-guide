@@ -541,8 +541,9 @@ dbHelper.prototype.addFamilyMember = (familyMember, userID) => {
 dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) => {
     
     let condition;
+    let expressionAttributeNames;
     if(attributeName != "fact")
-        condition = "#userID = :_id and #" + attributeName + " = :attributeValue";
+        condition = "#userID = :_id and #attributeName = :attributeValue";
     else
         condition = "#userID = :_id";
 
@@ -551,10 +552,11 @@ dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) =
         KeyConditionExpression: condition,
         ExpressionAttributeNames: {
             "#userID": "userId",
-            "attributeValue": attributeValue
+            "#attributeName": getFamilyDBField(attributeName)
         },
         ExpressionAttributeValues: {
             ":_id": userID,
+            ":attributeValue": attributeValue
         }
     };
 
@@ -699,6 +701,19 @@ const getFamilyDBText = (item, attributeName) => {
             return item.familyMemberFact;
         default:
             return item.familyMemberName;
+    }
+}
+
+const getFamilyDBField = (attributeName) => {
+    switch(attributeName) {
+        case "name":
+            return "familyMemberName";
+        case "relationship":
+            return "familyMemberRelationship";
+        case "fact":
+            return "familyMemberFact";
+        default:
+            return "familyMemberName";
     }
 }
 

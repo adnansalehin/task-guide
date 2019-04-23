@@ -291,7 +291,7 @@ const AddActivityIntentHandler = {
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const activity = {
-      title: slots.ActivityTitle.value,
+      name: slots.ActivityName.value,
       steps: slots.ActivitySteps.value
     };
 
@@ -567,7 +567,7 @@ const AddFamilyMemberIntentHandler = {
           .getResponse();
       })
       .catch((err) => {
-        console.log("An error occured while saving familyMember", err);
+        console.log("An error occured while saving family member", err);
         const speechText = "Sorry, I could not save the family member or friend information. Please try again!"
         return responseBuilder
           .speak(speechText)
@@ -603,8 +603,8 @@ const QueryFamilyMemberIntentHandler = {
           .getResponse();
       })
       .catch((err) => {
-        console.log("An error occured while retrieving your familyMember", err);
-        const speechText = "Sorry I couldn't find the steps to that familyMember. Try saying add familyMember to add that familyMember"
+        console.log("An error occured while retrieving your family member", err);
+        const speechText = "Sorry I couldn't find that family member. Try saying add family member to add that family member"
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -635,8 +635,8 @@ const EditFamilyMemberIntentHandler = {
           .getResponse();
       })
       .catch((err) => {
-        console.log("An error occured while retrieving your familyMember", err);
-        const speechText = "Sorry I couldn't find that familyMember. Try saying add familyMember to add that familyMember"
+        console.log("An error occured while retrieving your family member", err);
+        const speechText = "Sorry I couldn't find that family member. Try saying add family member to add that family member"
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -658,15 +658,15 @@ const RemoveFamilyMemberIntentHandler = {
     };
     return dbHelper.removeFamilyMember(familyMember, userID)
       .then(data => {
-        const speechText = "Successfully deleted familyMember with title " + familyMember.name;
+        const speechText = "Successfully deleted family member with title " + familyMember.name;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
           .getResponse();
       })
       .catch((err) => {
-        console.log("An error occured while retrieving your familyMember", err);
-        const speechText = "Sorry, I couldn't delete that familyMember."
+        console.log("An error occured while retrieving your family member", err);
+        const speechText = "Sorry, I couldn't delete that family member."
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -759,7 +759,7 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = "This skill offers five distict features. memories... activities... movies... medication... and family.. You can add, change, help you recall or delete information about all of these.";
+    const speechText = "This skill offers five distinct features. memories... activities... movies... medication... and family.. You can add, change, help you recall or delete information about all of these.";
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -799,7 +799,7 @@ const ErrorHandler = {
     return true;
   },
   handle(handlerInput, error) {
-    console.log("Error handled: ${error.message}");
+    console.log(`Error handled: ${error.message}`);
 
     return handlerInput.responseBuilder
       .speak('Sorry, I can\'t understand the command. Please say again.')
