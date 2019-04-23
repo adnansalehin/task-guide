@@ -23,7 +23,7 @@
             "codeUri": "lambda/us-east-1_fact-skill",
             "functionName": "fact-skill",
             "handler": "index.handler",
-            "revisionId": "25b9937d-3148-4e52-a7b7-3a17a77784f5",
+            "revisionId": "b839c1fd-eaaf-4e23-899c-9fd8adec54cb",
             "runtime": "nodejs8.10"
           }
         ]

@@ -86,7 +86,7 @@ const GetMoviesIntentHandler = {
           .getResponse();
       })
       .catch((err) => {
-        const speechText = "we cannot get your movie right now. Try again!"
+        const speechText = "I could not get your favourite movies list. Try again!"
         return responseBuilder
           .speak(speechText)
           .getResponse();

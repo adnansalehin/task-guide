@@ -195,7 +195,7 @@ dbHelper.prototype.editMemory = (memory, userID) => {
                                   'memoryQuestion' : item.memoryQuestion,
                                   'userId': userID
                                 },
-                                UpdateExpression: "set memoryAnswer = :answer",
+                                UpdateExpression: "set #memoryAnswer = :answer",
                                 ExpressionAttributeValues:{
                                     ":answer":memory.answer
                                 },
@@ -351,7 +351,7 @@ dbHelper.prototype.editActivity = (activity, userID) => {
                                   'activityQuestion' : item.activityQuestion,
                                   'userId': userID
                                 },
-                                UpdateExpression: "set activityAnswer = :answer",
+                                UpdateExpression: "set #activityAnswer = :answer",
                                 ExpressionAttributeValues:{
                                     ":answer":activity.answer
                                 },
@@ -465,7 +465,7 @@ dbHelper.prototype.editMedication = (medication, userID) => {
           'medicationName' : medication.name,
           'userId': userID
         },
-        UpdateExpression: "set medicationFrequency = :frequency and set medicationDosage = :dosage and set medicationTime = :time",
+        UpdateExpression: "set #edicationFrequency = :frequency, #medicationDosage = :dosage, #medicationTime = :time",
         ExpressionAttributeValues:{
             ":frequency": medication.frequency,
             ":dosage": medication.dosage,
@@ -634,11 +634,21 @@ dbHelper.prototype.editFamilyMember = (familyMember, userID) => {
                     .then(match => {
                         if(match) {
                             itemFound = true;
-                            let updateExpression = "";
-                            if(familyMember.fact != "later" && familyMember.fact != "add later")
-                                updateExpression = "set familyMemberRelationship = :relationship and familyMemberFact = :fact";
-                            else
-                                updateExpression = "set familyMemberRelationship = :relationship";
+                            let updateExpression;
+                            let expressionAttributeValues;
+                            if(familyMember.fact != "later" && familyMember.fact != "add later") {
+                                updateExpression = "set #familyMemberRelationship = :relationship, #familyMemberFact = :fact";
+                                expressionAttributeValues = {
+                                    ":relationship": familyMember.relationship,
+                                    ":fact": familyMember.fact
+                                };
+                            }
+                            else {
+                                updateExpression = "set #familyMemberRelationship = :relationship";
+                                expressionAttributeValues = {
+                                    ":relationship": familyMember.relationship
+                                };
+                            }
                             const params = {
                                 TableName: TABLE_FAMILY,
                                 Key: {
@@ -646,10 +656,7 @@ dbHelper.prototype.editFamilyMember = (familyMember, userID) => {
                                   'userId': userID
                                 },
                                 UpdateExpression: updateExpression,
-                                ExpressionAttributeValues:{
-                                    ":relationship": familyMember.relationship,
-                                    ":fact": familyMember.fact
-                                },
+                                ExpressionAttributeValues: expressionAttributeValues,
                                 ReturnValues:"UPDATED_NEW"
                             };
                             
@@ -759,9 +766,7 @@ const getNewMovieTableParams = () => {
     return params;
 }
 
-const checkTableExists = (tableName, newTableParams) => docClient.listTables({})
-.promise()
-.then((data) => {
+const checkTableExists = (tableName, newTableParams) => docClient.listTables({}).promise().then((data) => {
     const exists = data.TableNames
         .filter(name => {
             return name === tableName;
