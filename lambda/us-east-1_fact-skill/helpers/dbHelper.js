@@ -540,11 +540,18 @@ dbHelper.prototype.addFamilyMember = (familyMember, userID) => {
 //find family member info by any atribute the user wants. e.g. a fact about them, their relationship with the user, etc.
 dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) => {
     
+    let condition;
+    if(attributeName != "fact")
+        condition = "#userID = :_id and #" + attributeName + " = :attributeValue";
+    else
+        condition = "#userID = :_id";
+
     const params = {
         TableName: TABLE_FAMILY,
-        KeyConditionExpression: "#userID = :_id",
+        KeyConditionExpression: condition,
         ExpressionAttributeNames: {
             "#userID": "userId",
+            "attributeValue": attributeValue
         },
         ExpressionAttributeValues: {
             ":_id": userID,
@@ -561,6 +568,7 @@ dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) =
                 console.error("Unable to read familyMember table. Error JSON:", JSON.stringify(err, null, 2));
                 return reject(JSON.stringify(err, null, 2));
             }
+            console.log(data.Items);
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
@@ -614,7 +622,7 @@ dbHelper.prototype.editFamilyMember = (familyMember, userID) => {
                         if(match) {
                             itemFound = true;
                             let updateExpression = "";
-                            if(familyMember.fact)
+                            if(familyMember.fact != "later" && familyMember.fact != "add later")
                                 updateExpression = "set familyMemberRelationship = :relationship and familyMemberFact = :fact";
                             else
                                 updateExpression = "set familyMemberRelationship = :relationship";
