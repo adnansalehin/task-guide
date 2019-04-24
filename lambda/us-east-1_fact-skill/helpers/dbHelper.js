@@ -544,47 +544,16 @@ dbHelper.prototype.addFamilyMember = (familyMember, userID) => {
         });
     });
 }
-
-//find family member info by any atribute the user wants. e.g. a fact about them, their relationship with the user, etc.
+//find family member info by any atribute the user wants. 
+//e.g. a fact about them, their relationship with the user, etc.
 dbHelper.prototype.queryFamilyMember = (attributeName, attributeValue, userID) => {
     
-    let condition;
-    let expressionAttributeNames;
-    let expressionAttributeValues;
-    if(attributeName != "fact") {
-        condition = "#userID = :_id and #attributeName = :attributeValue";
-        expressionAttributeNames = {
-            "#userID": "userId",
-            "#attributeName": getFamilyDBField(attributeName)
-        };
-        expressionAttributeValues = {
-            ":_id": userID,
-            ":attributeValue": attributeValue
-        };
-    }
-    else {
-        condition = "#userID = :_id";
-        expressionAttributeNames = {
-            "#userID": "userId"
-        };
-        expressionAttributeValues = {
-            ":_id": userID
-        };
-    }
-
-    const params = {
-        TableName: TABLE_FAMILY,
-        KeyConditionExpression: condition,
-        ExpressionAttributeNames: expressionAttributeNames,
-        ExpressionAttributeValues: expressionAttributeValues,
-    };
-
     let itemFound = false;
     const promiseList = [];
 
     const promise = new Promise((resolve, reject) => {
 
-        docClient.query(params, (err, data) => {
+        docClient.query(getFamilyMemberQueryParams(attributeName, attributeValue, userID), (err, data) => {
             if(err) {
                 console.error("Unable to read familyMember table. Error JSON:", JSON.stringify(err, null, 2));
                 return reject(JSON.stringify(err, null, 2));
@@ -751,6 +720,40 @@ const getFamilyDBField = (attributeName) => {
         default:
             return "familyMemberName";
     }
+}
+
+const getFamilyMemberQueryParams = (attributeName, attributeValue, userID) => {
+    let condition;
+    let expressionAttributeNames;
+    let expressionAttributeValues;
+    if(attributeName != "fact") {
+        condition = "#userID = :_id and #attributeName = :attributeValue";
+        expressionAttributeNames = {
+            "#userID": "userId",
+            "#attributeName": getFamilyDBField(attributeName)
+        };
+        expressionAttributeValues = {
+            ":_id": userID,
+            ":attributeValue": attributeValue
+        };
+    }
+    else {
+        condition = "#userID = :_id";
+        expressionAttributeNames = {
+            "#userID": "userId"
+        };
+        expressionAttributeValues = {
+            ":_id": userID
+        };
+    }
+
+    const params = {
+        TableName: TABLE_FAMILY,
+        KeyConditionExpression: condition,
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
+    };
+    return params;
 }
 
 const getNewMovieTableParams = () => {
