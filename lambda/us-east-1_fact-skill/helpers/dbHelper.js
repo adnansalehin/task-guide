@@ -341,19 +341,22 @@ dbHelper.prototype.editActivity = (activity, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.activityQuestion, activity.question)
+                promiseList.push(checkTextMatch(item.activityName, activity.question)
                     .then(match => {
                         if(match) {
                             itemFound = true;
                             const params = {
                                 TableName: TABLE_ACTIVITY,
                                 Key: {
-                                  'activityQuestion' : item.activityQuestion,
+                                  'activityName' : item.activityName,
                                   'userId': userID
                                 },
-                                UpdateExpression: "set #activityAnswer = :answer",
+                                UpdateExpression: "set #activitySteps = :steps",
                                 ExpressionAttributeValues:{
-                                    ":answer":activity.answer
+                                    ":steps":activity.steps
+                                },
+                                ExpressionAttributeNames: {
+                                    "#activitySteps": "activitySteps"
                                 },
                                 ReturnValues:"UPDATED_NEW"
                             };
@@ -466,10 +469,15 @@ dbHelper.prototype.editMedication = (medication, userID) => {
           'userId': userID
         },
         UpdateExpression: "set #edicationFrequency = :frequency, #medicationDosage = :dosage, #medicationTime = :time",
+        ExpressionAttributeNames: {
+            "#medicationDosage": "medicationDosage",
+            "#edicationFrequency": "edicationFrequency",
+            "#medicationTime": "medicationTime"
+        },
         ExpressionAttributeValues:{
             ":frequency": medication.frequency,
             ":dosage": medication.dosage,
-            "time": medication.time
+            ":time": medication.time
         },
         ReturnValues:"UPDATED_NEW"
     };
