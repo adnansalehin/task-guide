@@ -341,7 +341,7 @@ dbHelper.prototype.editActivity = (activity, userID) => {
             //go through each item in the database to find a match
             let i=1;
             data.Items.forEach(item => {
-                promiseList.push(checkTextMatch(item.activityName, activity.question)
+                promiseList.push(checkTextMatch(item.activityName, activity.name)
                     .then(match => {
                         if(match) {
                             itemFound = true;
@@ -468,10 +468,10 @@ dbHelper.prototype.editMedication = (medication, userID) => {
           'medicationName' : medication.name,
           'userId': userID
         },
-        UpdateExpression: "set #edicationFrequency = :frequency, #medicationDosage = :dosage, #medicationTime = :time",
+        UpdateExpression: "set #medicationFrequency = :frequency, #medicationDosage = :dosage, #medicationTime = :time",
         ExpressionAttributeNames: {
             "#medicationDosage": "medicationDosage",
-            "#edicationFrequency": "edicationFrequency",
+            "#medicationFrequency": "medicationFrequency",
             "#medicationTime": "medicationTime"
         },
         ExpressionAttributeValues:{
