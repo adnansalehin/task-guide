@@ -20,18 +20,6 @@
           "samples": []
         },
         {
-          "name": "GetNewGuideIntent",
-          "slots": [],
-          "samples": [
-            "guide for tasks",
-            "help complete a task",
-            "tasks guides",
-            "task guides",
-            "tasks guide",
-            "task guide"
-          ]
-        },
-        {
           "name": "AMAZON.NavigateHomeIntent",
           "samples": []
         },
@@ -57,6 +45,7 @@
           "name": "GetMoviesIntent",
           "slots": [],
           "samples": [
+            "get movies",
             "what are my favourite movies",
             "get my movies"
           ]
@@ -73,6 +62,7 @@
             }
           ],
           "samples": [
+            "delete movie {MovieName}",
             "remove movie {MovieName}"
           ]
         },
@@ -81,11 +71,17 @@
           "slots": [
             {
               "name": "MemoryQuestion",
-              "type": "MemoryQuestion"
+              "type": "MemoryQuestion",
+              "samples": [
+                "{MemoryQuestion}"
+              ]
             },
             {
               "name": "MemoryAnswer",
-              "type": "MemoryAnswer"
+              "type": "MemoryAnswer",
+              "samples": [
+                "{MemoryAnswer}"
+              ]
             }
           ],
           "samples": [
@@ -107,14 +103,466 @@
           "slots": [
             {
               "name": "MemoryQuestion",
-              "type": "MemoryQuestion"
+              "type": "MemoryQuestion",
+              "samples": [
+                "{MemoryQuestion}"
+              ]
             }
           ],
           "samples": [
-            "remind me",
+            "help me recall",
             "help me remember",
-            "remind me {MemoryQuestion}",
-            "help me remember {MemoryQuestion}"
+            "remind me",
+            "remind me {MemoryQuestion}"
+          ]
+        },
+        {
+          "name": "EditMemoryIntent",
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion",
+              "samples": [
+                "{MemoryQuestion}"
+              ]
+            },
+            {
+              "name": "MemoryAnswer",
+              "type": "MemoryAnswer",
+              "samples": [
+                "{MemoryAnswer}"
+              ]
+            }
+          ],
+          "samples": [
+            "change memory",
+            "change the memory with answer {MemoryAnswer}",
+            "edit the memory with answer {MemoryAnswer}",
+            "edit the memory about {MemoryQuestion}",
+            "edit the memory {MemoryQuestion}",
+            "change a memory",
+            "edit a memory",
+            "edit memory {MemoryQuestion}",
+            "edit memory "
+          ]
+        },
+        {
+          "name": "RemoveMemoryIntent",
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion",
+              "samples": [
+                "{MemoryQuestion}"
+              ]
+            }
+          ],
+          "samples": [
+            "delete memory",
+            "remove memory {MemoryQuestion}",
+            "remove memory"
+          ]
+        },
+        {
+          "name": "MemoriesHelpIntent",
+          "slots": [
+            {
+              "name": "HelpItem",
+              "type": "HelpItem"
+            }
+          ],
+          "samples": [
+            "memory commands",
+            "help with memories {HelpItem}",
+            "memories help",
+            "memories"
+          ]
+        },
+        {
+          "name": "MoviesHelpIntent",
+          "slots": [
+            {
+              "name": "HelpItem",
+              "type": "HelpItem"
+            }
+          ],
+          "samples": [
+            "movies help",
+            "help with movies {HelpItem}",
+            "movies"
+          ]
+        },
+        {
+          "name": "ActivitiesHelpIntent",
+          "slots": [
+            {
+              "name": "HelpItem",
+              "type": "HelpItem"
+            }
+          ],
+          "samples": [
+            "help with activities {HelpItem}",
+            "activities help {HelpItem}",
+            "activities"
+          ]
+        },
+        {
+          "name": "MedicationHelpIntent",
+          "slots": [
+            {
+              "name": "HelpItem",
+              "type": "HelpItem"
+            }
+          ],
+          "samples": [
+            "help with medication",
+            "medication help {HelpItem}",
+            "medication"
+          ]
+        },
+        {
+          "name": "FamilyHelpIntent",
+          "slots": [
+            {
+              "name": "HelpItem",
+              "type": "HelpItem"
+            }
+          ],
+          "samples": [
+            "family and friennds help",
+            "family and friends",
+            "help with families feature",
+            "help with families {HelpItem}",
+            "families {HelpItem}",
+            "family commands {HelpItem}",
+            "family"
+          ]
+        },
+        {
+          "name": "AddActivityIntent",
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "samples": [
+                "{ActivityName}"
+              ]
+            },
+            {
+              "name": "ActivitySteps",
+              "type": "ActivitySteps",
+              "samples": [
+                "{ActivitySteps}"
+              ]
+            }
+          ],
+          "samples": [
+            "add activity {ActivityName} ",
+            "add new task",
+            "add a new task",
+            "add an activity {ActivitySteps}"
+          ]
+        },
+        {
+          "name": "QueryActivityIntent",
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "samples": [
+                "{ActivityName}"
+              ]
+            }
+          ],
+          "samples": [
+            "find activity",
+            "get activity",
+            "recall activity {ActivityName}",
+            "remember activity "
+          ]
+        },
+        {
+          "name": "EditActivityIntent",
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "samples": [
+                "{ActivityName}"
+              ]
+            },
+            {
+              "name": "ActivitySteps",
+              "type": "ActivitySteps",
+              "samples": [
+                "{ActivitySteps}"
+              ]
+            }
+          ],
+          "samples": [
+            "change activity",
+            "edit activity",
+            "change activity {ActivityName} {ActivitySteps}",
+            "edit activity {ActivityName}"
+          ]
+        },
+        {
+          "name": "RemoveActivityIntent",
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "samples": [
+                "{ActivityName}"
+              ]
+            }
+          ],
+          "samples": [
+            "delete activity",
+            "remove activity {ActivityName}"
+          ]
+        },
+        {
+          "name": "AddMedicationIntent",
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "samples": [
+                "{MedicationName}"
+              ]
+            },
+            {
+              "name": "MedicationFrequency",
+              "type": "MedicationFrequency",
+              "samples": [
+                "three times",
+                "two times",
+                "one time",
+                "four times",
+                "thrice",
+                "twice",
+                "once"
+              ]
+            },
+            {
+              "name": "MedicationDosage",
+              "type": "MedicationDosage",
+              "samples": [
+                "{MedicationDosage}"
+              ]
+            },
+            {
+              "name": "MedicationTime",
+              "type": "AMAZON.TIME",
+              "samples": [
+                "{MedicationTime}"
+              ]
+            }
+          ],
+          "samples": [
+            "add a medication",
+            "add a new medicine",
+            "add new medicine",
+            "add medicine",
+            "add medicine {MedicationName} {MedicationFrequency} {MedicationDosage} {MedicationTime}",
+            "add medication"
+          ]
+        },
+        {
+          "name": "QueryMedicationIntent",
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "samples": [
+                "{MedicationName}"
+              ]
+            }
+          ],
+          "samples": [
+            "get medication",
+            "remember medicine",
+            "recall medication",
+            "recall medicine {MedicationName}",
+            "take medicine",
+            "get medicine"
+          ]
+        },
+        {
+          "name": "EditMedicationIntent",
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "samples": [
+                "{MedicationName}"
+              ]
+            },
+            {
+              "name": "MedicationFrequency",
+              "type": "MedicationFrequency",
+              "samples": [
+                "{MedicationFrequency}"
+              ]
+            },
+            {
+              "name": "MedicationDosage",
+              "type": "MedicationDosage",
+              "samples": [
+                "{MedicationDosage}"
+              ]
+            },
+            {
+              "name": "MedicationTime",
+              "type": "AMAZON.TIME",
+              "samples": [
+                "{MedicationTime}"
+              ]
+            }
+          ],
+          "samples": [
+            "change medicine details",
+            "change medicine",
+            "edit medicine",
+            "edit medication details",
+            "change medication details",
+            "change medication {MedicationName} {MedicationFrequency} {MedicationDosage} {MedicationTime}",
+            "edit medication"
+          ]
+        },
+        {
+          "name": "RemoveMedicationIntent",
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "samples": [
+                "{MedicationName}"
+              ]
+            }
+          ],
+          "samples": [
+            "remove medicine {MedicationName}",
+            "remove medicine ",
+            "delete medication details for {MedicationName}",
+            "delete medicine"
+          ]
+        },
+        {
+          "name": "AddFamilyMemberIntent",
+          "slots": [
+            {
+              "name": "FamilyMemberName",
+              "type": "AMAZON.GB_FIRST_NAME",
+              "samples": [
+                "{FamilyMemberName}"
+              ]
+            },
+            {
+              "name": "FamilyMemberRelationship",
+              "type": "FamilyMemberRelationship",
+              "samples": [
+                "{FamilyMemberRelationship}"
+              ]
+            },
+            {
+              "name": "FamilyMemberFact",
+              "type": "FamilyMemberFact",
+              "samples": [
+                "{FamilyMemberFact}"
+              ]
+            }
+          ],
+          "samples": [
+            "add a friend",
+            "add a family member {FamilyMemberName} {FamilyMemberRelationship} ",
+            "add family member details {FamilyMemberFact}",
+            "add family",
+            "add friend",
+            "add family member"
+          ]
+        },
+        {
+          "name": "QueryFamilyMemberIntent",
+          "slots": [
+            {
+              "name": "AttributeName",
+              "type": "AttributeName",
+              "samples": [
+                "{AttributeName}"
+              ]
+            },
+            {
+              "name": "AttributeValue",
+              "type": "AttributeValue",
+              "samples": [
+                "{AttributeValue}"
+              ]
+            }
+          ],
+          "samples": [
+            "remember friend",
+            "find friend",
+            "find family member",
+            "recall family member details",
+            "recall family member ",
+            "get family member details",
+            "recall friend",
+            "recall family member {AttributeName} {AttributeValue}",
+            "get family member"
+          ]
+        },
+        {
+          "name": "EditFamilyMemberIntent",
+          "slots": [
+            {
+              "name": "FamilyMemberName",
+              "type": "AMAZON.GB_FIRST_NAME",
+              "samples": [
+                "{FamilyMemberName}"
+              ]
+            },
+            {
+              "name": "FamilyMemberRelationship",
+              "type": "FamilyMemberRelationship",
+              "samples": [
+                "{FamilyMemberRelationship}"
+              ]
+            },
+            {
+              "name": "FamilyMemberFact",
+              "type": "FamilyMemberFact"
+            }
+          ],
+          "samples": [
+            "edit friend information",
+            "edit friend details",
+            "edit friend",
+            "change family member details",
+            "edit family member details",
+            "edit family member information",
+            "change family member",
+            "edit family member",
+            "edit family member {FamilyMemberName} {FamilyMemberRelationship} {FamilyMemberFact}"
+          ]
+        },
+        {
+          "name": "RemoveFamilyMemberIntent",
+          "slots": [
+            {
+              "name": "FamilyMemberName",
+              "type": "AMAZON.GB_FIRST_NAME",
+              "samples": [
+                "{FamilyMemberName}"
+              ]
+            }
+          ],
+          "samples": [
+            "delete family member",
+            "delete friend {FamilyMemberName}",
+            "delete a friend",
+            "remove family member {FamilyMemberName}"
           ]
         }
       ],
@@ -123,7 +571,38 @@
           "values": [
             {
               "name": {
-                "value": "What is my name?"
+                "value": "my favourite food"
+              }
+            },
+            {
+              "name": {
+                "value": "my son's birthday"
+              }
+            },
+            {
+              "name": {
+                "value": "a memory about my son"
+              }
+            },
+            {
+              "name": {
+                "value": "a favorite childhood memory"
+              }
+            },
+            {
+              "name": {
+                "value": "what's my door number",
+                "synonyms": [
+                  "my door number"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "what's my daughter's name",
+                "synonyms": [
+                  " my daughter's name"
+                ]
               }
             }
           ],
@@ -133,11 +612,810 @@
           "values": [
             {
               "name": {
-                "value": "Adnan"
+                "value": "my best vacation was the one in japan"
+              }
+            },
+            {
+              "name": {
+                "value": "my favourite cuisine is japanese"
+              }
+            },
+            {
+              "name": {
+                "value": "i visited london for the first time in 1976"
+              }
+            },
+            {
+              "name": {
+                "value": "9000"
+              }
+            },
+            {
+              "name": {
+                "value": "500"
+              }
+            },
+            {
+              "name": {
+                "value": "Tom"
+              }
+            },
+            {
+              "name": {
+                "value": "Elizabeth"
+              }
+            },
+            {
+              "name": {
+                "value": "Jane"
               }
             }
           ],
           "name": "MemoryAnswer"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "ask my caregiver how to do this"
+              }
+            },
+            {
+              "name": {
+                "value": "go to the book shelf and find a book"
+              }
+            },
+            {
+              "name": {
+                "value": "put on my boots and warm up"
+              }
+            },
+            {
+              "name": {
+                "value": "find a calm place and close my eyes"
+              }
+            },
+            {
+              "name": {
+                "value": "put on shoes and go for a walk"
+              }
+            },
+            {
+              "name": {
+                "value": "gather clothes and put them in the washing machine"
+              }
+            },
+            {
+              "name": {
+                "value": "open shelf and find medicine",
+                "synonyms": [
+                  "open box and find medicine"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "get chess board",
+                "synonyms": [
+                  "find the chess board"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "wake up and go for a run"
+              }
+            }
+          ],
+          "name": "ActivitySteps"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "medication"
+              }
+            },
+            {
+              "name": {
+                "value": "activities"
+              }
+            },
+            {
+              "name": {
+                "value": "families"
+              }
+            },
+            {
+              "name": {
+                "value": "activity"
+              }
+            },
+            {
+              "name": {
+                "value": "family",
+                "synonyms": [
+                  "family and friends"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "memories"
+              }
+            }
+          ],
+          "name": "HelpItem"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "topiramate"
+              }
+            },
+            {
+              "name": {
+                "value": "procaine"
+              }
+            },
+            {
+              "name": {
+                "value": "acetaminophen"
+              }
+            },
+            {
+              "name": {
+                "value": "diazepam"
+              }
+            },
+            {
+              "name": {
+                "value": "aspirin"
+              }
+            },
+            {
+              "name": {
+                "value": "ibuprofen"
+              }
+            },
+            {
+              "name": {
+                "value": "paracetamol",
+                "synonyms": [
+                  "fever medicine"
+                ]
+              }
+            }
+          ],
+          "name": "MedicationName"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "eight times",
+                "synonyms": [
+                  "8 times"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "seven times",
+                "synonyms": [
+                  "7 times"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "six times",
+                "synonyms": [
+                  "6 times"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "five times",
+                "synonyms": [
+                  "5 times"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "four times",
+                "synonyms": [
+                  "4 times"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "thrice",
+                "synonyms": [
+                  "3 times",
+                  "three times"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "twice",
+                "synonyms": [
+                  "2 times",
+                  "two times"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "once",
+                "synonyms": [
+                  "1 time",
+                  "one time"
+                ]
+              }
+            }
+          ],
+          "name": "MedicationFrequency"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "1 tablet",
+                "synonyms": [
+                  "1 capsule"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "2 tablets",
+                "synonyms": [
+                  "2 capsules"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "3 tablets",
+                "synonyms": [
+                  "3 capsules"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "200 mg",
+                "synonyms": [
+                  "200 milligrams"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "500 mg",
+                "synonyms": [
+                  "500 milligrams"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "2 tablespoon"
+              }
+            }
+          ],
+          "name": "MedicationDosage"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "7 AM, 12 PM and  9 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "10 AM and  6 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "10 AM and  11 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "4 PM and  11 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "3 PM and  9 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "1 PM and  2 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "10 AM, 6 PM and  11 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "1 PM and  11 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "8 AM, 2 PM and  9 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "2 PM and  9 PM "
+              }
+            },
+            {
+              "name": {
+                "value": "one PM"
+              }
+            },
+            {
+              "name": {
+                "value": "six AM"
+              }
+            },
+            {
+              "name": {
+                "value": "four AM"
+              }
+            },
+            {
+              "name": {
+                "value": "4 PM"
+              }
+            },
+            {
+              "name": {
+                "value": "4 o' clock"
+              }
+            },
+            {
+              "name": {
+                "value": "3 o' clock"
+              }
+            }
+          ],
+          "name": "MedicationTime"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "Harry"
+              }
+            },
+            {
+              "name": {
+                "value": "Adnan"
+              }
+            },
+            {
+              "name": {
+                "value": "Robert"
+              }
+            },
+            {
+              "name": {
+                "value": "Helen"
+              }
+            },
+            {
+              "name": {
+                "value": "Mary"
+              }
+            },
+            {
+              "name": {
+                "value": "Margaret"
+              }
+            },
+            {
+              "name": {
+                "value": "Catherine"
+              }
+            },
+            {
+              "name": {
+                "value": "Jane"
+              }
+            },
+            {
+              "name": {
+                "value": "John"
+              }
+            }
+          ],
+          "name": "FamilyMemberName"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "grandson"
+              }
+            },
+            {
+              "name": {
+                "value": "granddaughter"
+              }
+            },
+            {
+              "name": {
+                "value": "grand father",
+                "synonyms": [
+                  "gran",
+                  "grand dad"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "grand mother",
+                "synonyms": [
+                  "granny",
+                  "grand ma"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "cousin"
+              }
+            },
+            {
+              "name": {
+                "value": "neighbor"
+              }
+            },
+            {
+              "name": {
+                "value": "carer"
+              }
+            },
+            {
+              "name": {
+                "value": "fiance"
+              }
+            },
+            {
+              "name": {
+                "value": "boyfriend",
+                "synonyms": [
+                  "boy friend"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "girlfriend",
+                "synonyms": [
+                  "girl friend"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "lover"
+              }
+            },
+            {
+              "name": {
+                "value": "friend",
+                "synonyms": [
+                  "buddies",
+                  "friends",
+                  "co worker",
+                  "co-worker",
+                  "colleague",
+                  "mate",
+                  "pal",
+                  "buddy",
+                  "best friend"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "brother",
+                "synonyms": [
+                  "step-brother",
+                  "step brother",
+                  "brother-in-law",
+                  "brother in law",
+                  "bro"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "sister",
+                "synonyms": [
+                  "step-sister",
+                  "sissy",
+                  "sister in law",
+                  "sister-in-law",
+                  "sis"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "father",
+                "synonyms": [
+                  "step-father",
+                  "father in law",
+                  "father-in-law",
+                  "dad"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "mother",
+                "synonyms": [
+                  "step-mother",
+                  "mother in law",
+                  "mother-in-law",
+                  "mum",
+                  "mom"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "husband"
+              }
+            },
+            {
+              "name": {
+                "value": "wife",
+                "synonyms": [
+                  "ex-wife",
+                  "partner",
+                  "lover",
+                  "other half",
+                  "better half"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "neice"
+              }
+            },
+            {
+              "name": {
+                "value": "nephew"
+              }
+            },
+            {
+              "name": {
+                "value": "daughter",
+                "synonyms": [
+                  "child"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "son",
+                "synonyms": [
+                  "child"
+                ]
+              }
+            }
+          ],
+          "name": "FamilyMemberRelationship"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "she is very tall"
+              }
+            },
+            {
+              "name": {
+                "value": "he is very tall"
+              }
+            },
+            {
+              "name": {
+                "value": "he plays basketball"
+              }
+            },
+            {
+              "name": {
+                "value": "he plays rugby"
+              }
+            },
+            {
+              "name": {
+                "value": "she goes to school",
+                "synonyms": [
+                  "she went to school with me"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "he is funny",
+                "synonyms": [
+                  "he is hilarious"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "she is funny",
+                "synonyms": [
+                  "she is hilarious"
+                ]
+              }
+            }
+          ],
+          "name": "FamilyMemberFact"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "fact"
+              }
+            },
+            {
+              "name": {
+                "value": "relationship"
+              }
+            },
+            {
+              "name": {
+                "value": "name"
+              }
+            }
+          ],
+          "name": "AttributeName"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "she goes to school"
+              }
+            },
+            {
+              "name": {
+                "value": "she is funny"
+              }
+            },
+            {
+              "name": {
+                "value": "he is hilarious"
+              }
+            },
+            {
+              "name": {
+                "value": "granddaughter"
+              }
+            },
+            {
+              "name": {
+                "value": "aunt"
+              }
+            },
+            {
+              "name": {
+                "value": "brother"
+              }
+            },
+            {
+              "name": {
+                "value": "friend"
+              }
+            },
+            {
+              "name": {
+                "value": "John"
+              }
+            },
+            {
+              "name": {
+                "value": "Jane"
+              }
+            }
+          ],
+          "name": "AttributeValue"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "go to sleep"
+              }
+            },
+            {
+              "name": {
+                "value": "read a book"
+              }
+            },
+            {
+              "name": {
+                "value": "call my mother"
+              }
+            },
+            {
+              "name": {
+                "value": "make a phone call"
+              }
+            },
+            {
+              "name": {
+                "value": "wash dishes",
+                "synonyms": [
+                  "do the dishes"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "wash clothes"
+              }
+            },
+            {
+              "name": {
+                "value": "go for a jog",
+                "synonyms": [
+                  "go for a walk"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "sleep"
+              }
+            },
+            {
+              "name": {
+                "value": "take medicine"
+              }
+            },
+            {
+              "name": {
+                "value": "meditate"
+              }
+            },
+            {
+              "name": {
+                "value": "play football"
+              }
+            },
+            {
+              "name": {
+                "value": "play"
+              }
+            }
+          ],
+          "name": "ActivityName"
         }
       ]
     },
@@ -161,15 +1439,18 @@
         },
         {
           "name": "RemoveMovieIntent",
-          "confirmationRequired": false,
-          "prompts": {},
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.857699614272"
+          },
           "slots": [
             {
               "name": "MovieName",
               "type": "AMAZON.Movie",
               "elicitationRequired": true,
-              "confirmationRequired": false,
+              "confirmationRequired": true,
               "prompts": {
+                "confirmation": "Confirm.Slot.857699614272.1221450989270",
                 "elicitation": "Elicit.Slot.1034415917954.788060345760"
               }
             }
@@ -218,6 +1499,433 @@
             }
           ],
           "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "EditMemoryIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.309328636654"
+          },
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.309328636654.1186043493423",
+                "elicitation": "Elicit.Slot.135020757754.1062459900885"
+              }
+            },
+            {
+              "name": "MemoryAnswer",
+              "type": "MemoryAnswer",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.309328636654.1497635574763"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "RemoveMemoryIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.603566853915"
+          },
+          "slots": [
+            {
+              "name": "MemoryQuestion",
+              "type": "MemoryQuestion",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.603566853915.1398549162324",
+                "elicitation": "Elicit.Slot.603566853915.1398549162324"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "AddActivityIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.478687517726"
+          },
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.1057607529852.92720514005",
+                "elicitation": "Elicit.Slot.324999459534.715288128179"
+              }
+            },
+            {
+              "name": "ActivitySteps",
+              "type": "ActivitySteps",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.552591796137.1424423660990",
+                "elicitation": "Elicit.Slot.324999459534.609191976562"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "QueryActivityIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.683180732296.743648641181",
+                "elicitation": "Elicit.Slot.900971226039.1436229591338"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "EditActivityIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.635057137122.1416841564436",
+                "elicitation": "Elicit.Slot.1352531882426.1372397929856"
+              }
+            },
+            {
+              "name": "ActivitySteps",
+              "type": "ActivitySteps",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.1352531882426.1012303504634"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "RemoveActivityIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.1260774851460"
+          },
+          "slots": [
+            {
+              "name": "ActivityName",
+              "type": "ActivityName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.310267956071.687311391561",
+                "elicitation": "Elicit.Slot.1231679130852.1068724637486"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "AddMedicationIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.479565798130.495944215635",
+                "elicitation": "Elicit.Slot.479565798130.495944215635"
+              }
+            },
+            {
+              "name": "MedicationFrequency",
+              "type": "MedicationFrequency",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.479565798130.832842869112",
+                "elicitation": "Elicit.Slot.479565798130.832842869112"
+              },
+              "validations": [
+                {
+                  "type": "hasEntityResolutionMatch",
+                  "prompt": "Slot.Validation.479565798130.832842869112.1403232962935"
+                }
+              ]
+            },
+            {
+              "name": "MedicationDosage",
+              "type": "MedicationDosage",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.479565798130.228296447662",
+                "elicitation": "Elicit.Slot.479565798130.228296447662"
+              }
+            },
+            {
+              "name": "MedicationTime",
+              "type": "AMAZON.TIME",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.479565798130.781166634907"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "QueryMedicationIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.384362259813.1432358195232",
+                "elicitation": "Elicit.Slot.384362259813.1432358195232"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "EditMedicationIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.169956491558"
+          },
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.169956491558.5677298079",
+                "elicitation": "Elicit.Slot.169956491558.5677298079"
+              }
+            },
+            {
+              "name": "MedicationFrequency",
+              "type": "MedicationFrequency",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.169956491558.1034918810860",
+                "elicitation": "Elicit.Slot.169956491558.1034918810860"
+              },
+              "validations": [
+                {
+                  "type": "hasEntityResolutionMatch",
+                  "prompt": "Slot.Validation.169956491558.1034918810860.1229279061350"
+                }
+              ]
+            },
+            {
+              "name": "MedicationDosage",
+              "type": "MedicationDosage",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.169956491558.581290729939",
+                "elicitation": "Elicit.Slot.169956491558.581290729939"
+              }
+            },
+            {
+              "name": "MedicationTime",
+              "type": "AMAZON.TIME",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.169956491558.1502192312469"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "RemoveMedicationIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.439397546264"
+          },
+          "slots": [
+            {
+              "name": "MedicationName",
+              "type": "MedicationName",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.439397546264.152371173528",
+                "elicitation": "Elicit.Slot.439397546264.152371173528"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "AddFamilyMemberIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.956430844786"
+          },
+          "slots": [
+            {
+              "name": "FamilyMemberName",
+              "type": "AMAZON.GB_FIRST_NAME",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.188608850502.183550246733"
+              }
+            },
+            {
+              "name": "FamilyMemberRelationship",
+              "type": "FamilyMemberRelationship",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.188608850502.575115341532"
+              },
+              "validations": [
+                {
+                  "type": "hasEntityResolutionMatch",
+                  "prompt": "Slot.Validation.188608850502.575115341532.856095932312"
+                }
+              ]
+            },
+            {
+              "name": "FamilyMemberFact",
+              "type": "FamilyMemberFact",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.956430844786.383627000406"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "QueryFamilyMemberIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "AttributeName",
+              "type": "AttributeName",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.245660309122.1073159386613"
+              },
+              "validations": [
+                {
+                  "type": "hasEntityResolutionMatch",
+                  "prompt": "Slot.Validation.245660309122.1073159386613.283881157254"
+                }
+              ]
+            },
+            {
+              "name": "AttributeValue",
+              "type": "AttributeValue",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.245660309122.1343404082042",
+                "elicitation": "Elicit.Slot.245660309122.1343404082042"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "RemoveFamilyMemberIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.185368984721"
+          },
+          "slots": [
+            {
+              "name": "FamilyMemberName",
+              "type": "AMAZON.GB_FIRST_NAME",
+              "elicitationRequired": true,
+              "confirmationRequired": true,
+              "prompts": {
+                "confirmation": "Confirm.Slot.185368984721.1027829440829",
+                "elicitation": "Elicit.Slot.185368984721.1027829440829"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
+        },
+        {
+          "name": "EditFamilyMemberIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "FamilyMemberName",
+              "type": "AMAZON.GB_FIRST_NAME",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.386656353348.148392177145"
+              }
+            },
+            {
+              "name": "FamilyMemberRelationship",
+              "type": "FamilyMemberRelationship",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.386656353348.192939554289"
+              },
+              "validations": [
+                {
+                  "type": "hasEntityResolutionMatch",
+                  "prompt": "Slot.Validation.386656353348.192939554289.270180863981"
+                }
+              ]
+            },
+            {
+              "name": "FamilyMemberFact",
+              "type": "FamilyMemberFact",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.386656353348.265719165545"
+              }
+            }
+          ],
+          "delegationStrategy": "ALWAYS"
         }
       ],
       "delegationStrategy": "SKILL_RESPONSE"
@@ -228,11 +1936,11 @@
         "variations": [
           {
             "type": "PlainText",
-            "value": "What is the name of the movie"
+            "value": "What is the name of the movie?"
           },
           {
             "type": "PlainText",
-            "value": "Which movie would you like to add "
+            "value": "Which movie would you like to add?"
           }
         ]
       },
@@ -241,7 +1949,7 @@
         "variations": [
           {
             "type": "PlainText",
-            "value": "Which movie would you like to remove "
+            "value": "Which movie would you like to remove?"
           }
         ]
       },
@@ -277,7 +1985,7 @@
         "variations": [
           {
             "type": "PlainText",
-            "value": "Memory collected. Should we go ahead and save it permanently?"
+            "value": "The memory about {MemoryQuestion} has been collected. Should I go ahead and save it permanently?"
           }
         ]
       },
@@ -298,8 +2006,655 @@
             "value": "please fill in the testing slot"
           }
         ]
+      },
+      {
+        "id": "Elicit.Slot.135020757754.1062459900885",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the question or title of the memory?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.309328636654.1497635574763",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the new answer for this memory?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.309328636654",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to save the changes to the memory {MemoryQuestion}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.309328636654.1186043493423",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, you want to change the memory {MemoryQuestion}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.857699614272",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to remove the movie {MovieName} from your list of favourite movies?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.603566853915.1398549162324",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the question or title of this memory?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.603566853915.1398549162324",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, you want to delete the memory {MemoryQuestion}, is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.603566853915",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to delete the memory {MemoryQuestion}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.857699614272.1221450989270",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, you want to delete the movie {MovieName}, is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.478687517726",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to save the activity {ActivityName}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.1260774851460",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to delete the activity {ActivityName}?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.479565798130.495944215635",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of this medicine?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.479565798130.832842869112",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "How many times a day do you take {MedicationName}?"
+          },
+          {
+            "type": "PlainText",
+            "value": "How often do you take {MedicationName} in one day?"
+          },
+          {
+            "type": "PlainText",
+            "value": "How many times a day should you take {MedicationName}?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.479565798130.228296447662",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "How much {MedicationName} should you take at a time?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What is the correct dosage for {MedicationName}?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What is the dosage amount for {MedicationName}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.479565798130.228296447662",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, I heard {MedicationDosage}, is that correct?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Alright... I heard {MedicationDosage}, is that right?"
+          },
+          {
+            "type": "PlainText",
+            "value": "I heard {MedicationDosage}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.479565798130.832842869112",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Alright... I heard {MedicationFrequency}, am I right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.479565798130.495944215635",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, I heard {MedicationName}, is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.384362259813.1432358195232",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of this medicine?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.384362259813.1432358195232",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, I heard... {MedicationName}, is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.169956491558.5677298079",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, I heard {MedicationName}, is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.169956491558.5677298079",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of this medicine?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.479565798130.781166634907",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "When do you usually take {MedicationName}?"
+          },
+          {
+            "type": "PlainText",
+            "value": "At what time should you take {MedicationName}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.169956491558",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to change the details for {MedicationName}"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.169956491558.1502192312469",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "At what time should you take {MedicationName}?"
+          },
+          {
+            "type": "PlainText",
+            "value": "When do you usually take {MedicationName}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.439397546264",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to delete the medicine {MedicationName}"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.439397546264.152371173528",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of this medicine?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.439397546264.152371173528",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Just to make sure, is it {MedicationName}?"
+          },
+          {
+            "type": "PlainText",
+            "value": "So, I heard {MedicationName}, is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.169956491558.1034918810860",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "How many times a day should you take {MedicationName}?"
+          },
+          {
+            "type": "PlainText",
+            "value": "How often do you take {MedicationName} in one day?"
+          },
+          {
+            "type": "PlainText",
+            "value": "How many times a day do you take {MedicationName}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.169956491558.1034918810860",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Alright... I heard {MedicationFrequency}, am I right?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.169956491558.581290729939",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the dosage amount for {MedicationName}"
+          },
+          {
+            "type": "PlainText",
+            "value": "What is the correct dosage for {MedicationName}"
+          },
+          {
+            "type": "PlainText",
+            "value": "How much {MedicationName} should you take at a time"
+          }
+        ]
+      },
+      {
+        "id": "Slot.Validation.479565798130.832842869112.1403232962935",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound right. Say something like... once, twice, or, two times, etc."
+          },
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound like a frequency. How often do you take {MedicationName}, say something like... once, twice, or, two times, etc."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.188608850502.183550246733",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is his, or, her name?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What is their name?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.188608850502.575115341532",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "How are you and {FamilyMemberName} related?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What is {FamilyMemberName}'s relationship to you?"
+          }
+        ]
+      },
+      {
+        "id": "Slot.Validation.188608850502.575115341532.856095932312",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound right. Say something like... child, niece, uncle, aunt, friend, etc."
+          },
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound right. Say something like... son, daughter, wife, nephew, friend, etc."
+          }
+        ]
+      },
+      {
+        "id": "Slot.Validation.169956491558.1034918810860.1229279061350",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound like a frequency. How often do you take {MedicationName}, say something like... once, twice, or, two times, etc."
+          },
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound right. Say something like... once, twice, or, two times, etc."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.245660309122.1073159386613",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "How would you like to remember this person...  you can say one of name, relationship or, fact, to let me know"
+          },
+          {
+            "type": "PlainText",
+            "value": "What do you remember about this person... you can say one of name, relationship or, fact, to let me know"
+          }
+        ]
+      },
+      {
+        "id": "Slot.Validation.245660309122.1073159386613.283881157254",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound right... you can only say the words name, relationship or, fact, for this question"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.245660309122.1343404082042",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Alright... what is the {AttributeName}"
+          },
+          {
+            "type": "PlainText",
+            "value": "Okay... so.. what is the {AttributeName}"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.245660309122.1343404082042",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "You said {AttributeValue}, is that correct?"
+          },
+          {
+            "type": "PlainText",
+            "value": "I heard {AttributeValue}, is that all good?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.185368984721.1027829440829",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is their name?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What is his, or, her name?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.185368984721.1027829440829",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So, you want to delete the information about {FamilyMemberName}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.185368984721",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.386656353348.148392177145",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is their name?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What is his, or, her name?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.386656353348.192939554289",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is {FamilyMemberName}'s relationship to you?"
+          },
+          {
+            "type": "PlainText",
+            "value": "How are you and {FamilyMemberName} related?"
+          }
+        ]
+      },
+      {
+        "id": "Slot.Validation.386656353348.192939554289.270180863981",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound right. Say something like... son, daughter, wife, nephew, friend, etc."
+          },
+          {
+            "type": "PlainText",
+            "value": "Hmm... that doesn't sound right. Say something like... child, niece, uncle, aunt, friend, etc."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.386656353348.265719165545",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is an interesting fact about {FamilyMemberName}, you can say add later if you don't want to add this right now... any other response will be recorded."
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.169956491558.581290729939",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "So... {MedicationDosage}, is that correct?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Alright... I heard {MedicationDosage}, is that right?"
+          },
+          {
+            "type": "PlainText",
+            "value": "I heard {MedicationDosage}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.956430844786",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Information collected. Should I go ahead and save the details for {FamilyMemberName}?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.956430844786.383627000406",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is an interesting fact about {FamilyMemberName}, you can say add later if you don't want to add this right now... any other response will be recorded."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.324999459534.715288128179",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of the activity?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.324999459534.609191976562",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What are the steps required for {ActivityName}?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.900971226039.1436229591338",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of the activity?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.1352531882426.1372397929856",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of the activity?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.1231679130852.1068724637486",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What is the name of the activity?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.1352531882426.1012303504634",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What are the steps required for {ActivityName}?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.552591796137.1424423660990",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "You said, {ActivitySteps}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.1057607529852.92720514005",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "you said {ActivityName}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.683180732296.743648641181",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "you said {ActivityName}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.635057137122.1416841564436",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "you said {ActivityName}, is that right?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.310267956071.687311391561",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "you said {ActivityName}, is that right?"
+          }
+        ]
       }
     ]
-  },
-  "version": "50"
+  }
 }
