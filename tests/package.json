@@ -1,0 +1,17 @@
+{
+  "name": "alexa-skill-kit-sdk-factskill",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "alexa-sdk": "^1.0.25",
+    "ask-sdk": "^2.0.10",
+    "nlcst-to-string": "^2.0.2",
+    "retext": "^6.0.1",
+    "retext-keywords": "^4.0.2",
+    "unirest": "^0.6.0",
+    "american-british-english-translator": "0.1.2",
+    "retext-pos": "2.0.1",
+    "unist-util-visit":"1.4.0",
+    "unist-util-inspect": "4.1.3"
+  }
+}

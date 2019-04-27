@@ -611,43 +611,9 @@ dbHelper.prototype.editFamilyMember = (familyMember, userID) => {
                     .then(match => {
                         if(match) {
                             itemFound = true;
-                            let updateExpression;
-                            let expressionAttributeValues;
-                            let expressionAttributeNames;
-                            if(familyMember.fact != "later" && familyMember.fact != "add later") {
-                                updateExpression = "set #familyMemberRelationship = :relationship, #familyMemberFact = :fact";
-                                expressionAttributeValues = {
-                                    ":relationship": familyMember.relationship,
-                                    ":fact": familyMember.fact
-                                };
-                                expressionAttributeNames = {
-                                    "#familyMemberFact": "familyMemberFact",
-                                    "#familyMemberRelationship": "familyMemberRelationship"
-                                };
-                            }
-                            else {
-                                updateExpression = "set #familyMemberRelationship = :relationship";
-                                expressionAttributeValues = {
-                                    ":relationship": familyMember.relationship
-                                };
-                                expressionAttributeNames = {
-                                    "#familyMemberRelationship": "familyMemberRelationship"
-                                };
-                            }
-                            const params = {
-                                TableName: TABLE_FAMILY,
-                                Key: {
-                                  'familyMemberName' : item.familyMemberName,
-                                  'userId': userID
-                                },
-                                
-                                UpdateExpression: updateExpression,
-                                ExpressionAttributeNames: expressionAttributeNames,
-                                ExpressionAttributeValues: expressionAttributeValues,
-                                ReturnValues:"UPDATED_NEW"
-                            };
+
                             
-                            docClient.update(params, (err, updateData) => {
+                            docClient.update(getFamilyMemberUpdateParams(item, familyMember), (err, updateData) => {
                                 if(err) {
                                     console.error("Unable to update familyMember table. Error JSON:", JSON.stringify(err, null, 2));
                                     return reject(JSON.stringify(err, null, 2));
@@ -752,6 +718,45 @@ const getFamilyMemberQueryParams = (attributeName, attributeValue, userID) => {
         KeyConditionExpression: condition,
         ExpressionAttributeNames: expressionAttributeNames,
         ExpressionAttributeValues: expressionAttributeValues,
+    };
+    return params;
+}
+
+const getFamilyMemberUpdateParams = (item, familyMember) => {
+    let updateExpression;
+    let expressionAttributeValues;
+    let expressionAttributeNames;
+    if(familyMember.fact != "later" && familyMember.fact != "add later") {
+        updateExpression = "set #familyMemberRelationship = :relationship, #familyMemberFact = :fact";
+        expressionAttributeValues = {
+            ":relationship": familyMember.relationship,
+            ":fact": familyMember.fact
+        };
+        expressionAttributeNames = {
+            "#familyMemberFact": "familyMemberFact",
+            "#familyMemberRelationship": "familyMemberRelationship"
+        };
+    }
+    else {
+        updateExpression = "set #familyMemberRelationship = :relationship";
+        expressionAttributeValues = {
+            ":relationship": familyMember.relationship
+        };
+        expressionAttributeNames = {
+            "#familyMemberRelationship": "familyMemberRelationship"
+        };
+    }
+    const params = {
+        TableName: TABLE_FAMILY,
+        Key: {
+        'familyMemberName' : item.familyMemberName,
+        'userId': userID
+        },
+        
+        UpdateExpression: updateExpression,
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ReturnValues:"UPDATED_NEW"
     };
     return params;
 }

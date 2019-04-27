@@ -421,7 +421,7 @@ const AddMedicationIntentHandler = {
       name: slots.MedicationName.value,
       frequency: slots.MedicationFrequency.value,
       dosage: slots.MedicationDosage.value,
-      time: slots.MedicationTime.value     
+      time: slots.mTime.value     
     };
 
     return dbHelper.addMedication(medication, userID)
