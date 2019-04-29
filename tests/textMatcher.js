@@ -121,9 +121,7 @@ const populateKeywordList = (wordList, textInput) => {
 
 const translateEnglishUStoEnglishUK = text => {
   const translateAmerican = translator.translate(text, { american: true });
-  console.log("lllll");
   if (translateAmerican[1]){
-    // console.log(JSON.stringify(translateAmerican[1]));
     translateAmerican[1].forEach(word => {
       usWord = Object.keys(word)[0];
       if(word[usWord].issue=="American English Spelling") {
@@ -137,9 +135,6 @@ const translateEnglishUStoEnglishUK = text => {
 };
 
 const applyDiceAndCosineSimilarity = (string1, string2) => {
-  console.log("sindingexing");
-  console.log(" calculating SI for: ", string1, " ....and.... ", string2);
-  
   const c = parseFloat(consineSimilarity(string1, string2));
   const d = parseFloat(diceSimilarity(string1, string2));
   return (c + d) / 2;
