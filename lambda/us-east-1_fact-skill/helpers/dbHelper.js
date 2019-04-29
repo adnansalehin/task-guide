@@ -884,12 +884,16 @@ const populateKeywordList = (wordList, textInput) => {
 
 const translateEnglishUStoEnglishUK = text => {
     const translateAmerican = translator.translate(text, { american: true });
-    if(translateAmerican[1]) 
-        translateAmerican[1].forEach(word => {
-            usWord = Object.keys(word)[0];
-            ukWord = word[usWord].details;
+    if (translateAmerican[1]){
+      translateAmerican[1].forEach(word => {
+        usWord = Object.keys(word)[0];
+        if(word[usWord].issue=="American English Spelling") {
+          ukWord = word[usWord].details;
+          if(typeof usWord == "string" && typeof ukWord == "string")
             text = text.replace(usWord, ukWord);
-        });
+        }
+      });
+    }
     return text;
 }
 
