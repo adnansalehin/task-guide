@@ -35,13 +35,13 @@ const checkTextMatch = (dbText, utteredText) => {
       dbSentenceKeywords = dbSentenceKeywords.filter(
         i => !QUESTION_WORDS.includes(i)
       );
-
+        console.log(utteredSentenceKeywords);
+        console.log(dbSentenceKeywords);
       if (
         dbSentenceKeywords.every(value =>
           utteredSentenceKeywords.includes(value)
         )
-      )
-        resolve(true);
+      ) resolve(true);
       else {
         const similarityIndex = applyDiceAndCosineSimilarity(
           utteredText,
@@ -50,7 +50,11 @@ const checkTextMatch = (dbText, utteredText) => {
         console.log("Similarity Index: " + similarityIndex.toString());
         if (similarityIndex > 80) resolve(true);
         else {
-          applySynonymCheck(utteredSentenceKeywords, dbSentenceKeywords).then(
+          console.log(utteredSentenceKeywords);
+          console.log(JSON.stringify(dbSentenceKeywords));
+
+          //testing perfirmance without keyword extraction
+          applySynonymCheck(utteredText.split(" "), dbText.split(" ")).then(
             sIndex => {
               console.log(
                 "Similarity Index with Synonyms: " + sIndex.toString()
@@ -67,12 +71,13 @@ const checkTextMatch = (dbText, utteredText) => {
 
 const getSynonyms = word => {
   return new Promise((resolve, reject) => {
+    console.log("getting synonyms for:   " +word);
     unirest
       .get("https://wordsapiv1.p.mashape.com/words/" + word + "/synonyms")
       .header("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
       .header("X-RapidAPI-Key", RAPID_API_KEY)
       .end(function(result) {
-        resolve(result.body.synonyms);
+        result.body.synonyms? resolve(result.body.synonyms) : resolve([]);
       });
   });
 };
@@ -84,10 +89,11 @@ const applySynonymCheck = (kList, kList2) => {
       kList2.forEach(i => {
         // if synonyms of a keyword matches with a keyword in database then replace original with database value
         if (synonyms.includes(i)) {
+          
+          console.log(`replacing this word: ${word} with: ${i}`);
           kList[kList.indexOf(word)] = i;
         }
-        console.log(`GVIEN: ${word}`);
-        console.log(`Synonyms: ${synonyms}`);
+        // console.log(`Synonyms: ${synonyms}`);
       });
     });
     synonymPromiseList.push(synonymPromise);
@@ -99,7 +105,7 @@ const applySynonymCheck = (kList, kList2) => {
 
 const populateKeywordList = (wordList, textInput) => {
   const translatedText = translateEnglishUStoEnglishUK(textInput);
-
+  console.log(`after translation: ${translatedText}`);
   retext()
     .use(keywords)
     .process(translatedText, (err, text) => {
@@ -107,7 +113,7 @@ const populateKeywordList = (wordList, textInput) => {
         console.error("Failed to extract keywords");
       } else {
         text.data.keywords.forEach(keyword => {
-          wordList.push(toString(keyword.matches[0].node).replace("'s", ""));
+          wordList.push(toString(keyword.matches[0].node));
         });
       }
     });
@@ -115,16 +121,25 @@ const populateKeywordList = (wordList, textInput) => {
 
 const translateEnglishUStoEnglishUK = text => {
   const translateAmerican = translator.translate(text, { american: true });
-  if (translateAmerican[1])
+  console.log("lllll");
+  if (translateAmerican[1]){
+    // console.log(JSON.stringify(translateAmerican[1]));
     translateAmerican[1].forEach(word => {
       usWord = Object.keys(word)[0];
-      ukWord = word[usWord].details;
-      text = text.replace(usWord, ukWord);
+      if(word[usWord].issue=="American English Spelling") {
+        ukWord = word[usWord].details;
+        if(typeof usWord == "string" && typeof ukWord == "string")
+          text = text.replace(usWord, ukWord);
+      }
     });
+  }
   return text;
 };
 
 const applyDiceAndCosineSimilarity = (string1, string2) => {
+  console.log("sindingexing");
+  console.log(" calculating SI for: ", string1, " ....and.... ", string2);
+  
   const c = parseFloat(consineSimilarity(string1, string2));
   const d = parseFloat(diceSimilarity(string1, string2));
   return (c + d) / 2;
@@ -211,9 +226,10 @@ const retextTense = word => {
 
     console.log(node.data.partOfSpeech);
   });
-  // retext()
+  retext()
+  .use(keywords)
   // .use(pos)
-  // // .use(function() {
+  // .use(function() {
   //     return transformer
   //     function transformer(tree) {
   //       console.log(inspect(tree))
@@ -221,23 +237,32 @@ const retextTense = word => {
   //   })
   // .process(word)
   // .then(x => console.log(x));
-  // .process(word, (err, text) => {
-  //     if(err) {
-  //         console.error("Failed to extract keywords");
-  //     } else {
-  //         text.data.keywords.forEach(keyword => {
-  //            console.log(keyword);
-  //         });
-  //     }
-  // });
+  .process(word, (err, text) => {
+      if(err) {
+          console.error("Failed to extract keywords");
+      } else {
+          text.data.keywords.forEach(keyword => {
+             console.log(keyword);
+          });
+      }
+  }); 
 };
 
-retextTense("my boy name");
+// retextTense("my boy name");
 
-// getSynonyms("name").then(l=> console.log(l));
-// getSynonyms("called").then(l=> console.log(l));
+// getSynonyms("meditation").then(l=> console.log(l));
+// getSynonyms("wannphonea").then(l=> console.log(l));
 // getSynonyms("food").then(l=> console.log(l));
 // getSynonyms("number").then(l=> console.log(l));
 // getSynonyms("childhood").then(l=> console.log(l));
 // getSynonyms("child").then(l=> console.log(l));
 // getSynonyms("mother").then(l=> console.log(l));
+
+const str2 = "We will go play chess";
+const str1 = "We will go play football";
+
+// const str1 = "my favorite cat";
+// const str2 = "my favourite dog";
+checkTextMatch(str1, str2).then(match => console.log(match)); 
+
+// console.log(translateEnglishUStoEnglishUK("favorite"));
