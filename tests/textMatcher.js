@@ -3,6 +3,7 @@ const keywords = require("retext-keywords");
 const pos = require("retext-pos");
 const toString = require("nlcst-to-string");
 const unirest = require("unirest");
+const rake = require("rake-js").default;
 const translator = require("american-british-english-translator");
 const QUESTION_WORDS = [
   "what",
@@ -53,7 +54,7 @@ const checkTextMatch = (dbText, utteredText) => {
           console.log(utteredSentenceKeywords);
           console.log(JSON.stringify(dbSentenceKeywords));
 
-          //testing perfirmance without keyword extraction
+          //testing performance without keyword extraction
           applySynonymCheck(utteredText.split(" "), dbText.split(" ")).then(
             sIndex => {
               console.log(
@@ -112,9 +113,14 @@ const populateKeywordList = (wordList, textInput) => {
       if (err) {
         console.error("Failed to extract keywords");
       } else {
-        text.data.keywords.forEach(keyword => {
-          wordList.push(toString(keyword.matches[0].node));
+        const rakeWords = new Set(rake(translatedText, { language: 'english' }));
+        rakeWords.forEach(keyword => {
+          keyword.split(" ").map(word => rakeWords.add(word));
         });
+        text.data.keywords.forEach(keyword => {
+          rakeWords.add(toString(keyword.matches[0].node));
+        });
+        rakeWords.forEach(item => wordList.push(item));
       }
     });
 };
@@ -258,6 +264,8 @@ const str1 = "We will go play football";
 
 // const str1 = "my favorite cat";
 // const str2 = "my favourite dog";
-checkTextMatch(str1, str2).then(match => console.log(match)); 
-
+// checkTextMatch(str1, str2).then(match => console.log(match)); 
+let utteredSentenceKeywords = [];
+populateKeywordList(utteredSentenceKeywords, "my favorite food is chocolate");
+console.log(utteredSentenceKeywords);
 // console.log(translateEnglishUStoEnglishUK("favorite"));

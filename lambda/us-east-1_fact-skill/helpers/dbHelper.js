@@ -4,6 +4,7 @@ const keywords = require("retext-keywords");
 const toString = require('nlcst-to-string');
 const unirest = require('unirest');
 const translator = require('american-british-english-translator');
+const rake = require("rake-js").default;
 
 const TABLE_MEMORY = "memory-bank";
 const TABLE_MOVIE = "movie-bank";
@@ -875,9 +876,14 @@ const populateKeywordList = (wordList, textInput) => {
         if(err) {
             console.error("Failed to extract keywords");
         } else {
-            text.data.keywords.forEach(keyword => {
-                wordList.push(toString(keyword.matches[0].node).replace("\'s", ""));
+            const rakeWords = new Set(rake(translatedText, { language: 'english' }));
+            rakeWords.forEach(keyword => {
+              keyword.split(" ").map(word => rakeWords.add(word));
             });
+            text.data.keywords.forEach(keyword => {
+              rakeWords.add(toString(keyword.matches[0].node));
+            });
+            rakeWords.forEach(item => wordList.push(item));
         }
     });
 }
