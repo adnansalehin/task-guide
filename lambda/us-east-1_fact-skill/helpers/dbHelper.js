@@ -845,7 +845,7 @@ const getSynonyms = word => {
             .header("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
             .header("X-RapidAPI-Key", RAPID_API_KEY)
             .end(function(result) {
-                resolve(result.body.synonyms);
+                result.body.synonyms ? resolve(result.body.synonyms) : resolve([]);
             });
     });
 }
