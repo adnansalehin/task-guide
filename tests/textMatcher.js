@@ -125,6 +125,22 @@ const populateKeywordList = (wordList, textInput) => {
     });
 };
 
+const populateKeywordListWithoutRake = (wordList, textInput) => {
+  const translatedText = translateEnglishUStoEnglishUK(textInput);
+  console.log(`after translation: ${translatedText}`);
+  retext()
+    .use(keywords)
+    .process(translatedText, (err, text) => {
+      if (err) {
+        console.error("Failed to extract keywords");
+      } else {
+        text.data.keywords.forEach(keyword => {
+          wordList.push(toString(keyword.matches[0].node));
+        });
+      }
+    });
+};
+
 const translateEnglishUStoEnglishUK = text => {
   const translateAmerican = translator.translate(text, { american: true });
   if (translateAmerican[1]){
@@ -266,6 +282,12 @@ const str1 = "We will go play football";
 // const str2 = "my favourite dog";
 // checkTextMatch(str1, str2).then(match => console.log(match)); 
 let utteredSentenceKeywords = [];
-populateKeywordList(utteredSentenceKeywords, "my favorite food is chocolate");
+let utteredSentenceKeywords2 = [];
+s="I take this medicine by mixing it with water";
+
+populateKeywordList(utteredSentenceKeywords, s);
 console.log(utteredSentenceKeywords);
+
+populateKeywordListWithoutRake(utteredSentenceKeywords2, s);
+console.log(utteredSentenceKeywords2);
 // console.log(translateEnglishUStoEnglishUK("favorite"));
