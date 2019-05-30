@@ -327,7 +327,7 @@ const QueryActivityIntentHandler = {
     };
     return dbHelper.queryActivity(activity, userID)
       .then(data => {
-        const speechText = "The steps for the activity " + activity.name + " is " + data.activitySteps || "Sorry I couldn't find the steps to that activity. Try saying add activity to add that activity";
+        const speechText = "The steps for the activity " + data.activityName + " is " + data.activitySteps || "Sorry I couldn't find the steps to that activity. Try saying add activity to add that activity";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -456,7 +456,8 @@ const QueryMedicationIntentHandler = {
     };
     return dbHelper.queryMedication(medication, userID)
       .then(data => {
-        const speechText = "You should take " + data.medicationName + "... " + data.medicationFrequency + " at " + data.medicationTime || "Sorry I couldn't find that medicine. Try saying add medication to add that medicine";
+        const speechText = "You should take " + data.medicationDosage + " of " + data.medicationName + "... " 
+        + data.medicationFrequency + ", at " + data.medicationTime || "Sorry I couldn't find that medicine. Try saying add medication to add that medicine";
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)

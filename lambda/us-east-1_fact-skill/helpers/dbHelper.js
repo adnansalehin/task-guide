@@ -693,11 +693,11 @@ const getFamilyMemberQueryParams = (attributeName, attributeValue, userID) => {
     let condition;
     let expressionAttributeNames;
     let expressionAttributeValues;
-    if(attributeName != "fact") {
+    if(attributeName == "name") {
         condition = "#userID = :_id and #attributeName = :attributeValue";
         expressionAttributeNames = {
             "#userID": "userId",
-            "#attributeName": getFamilyDBField(attributeName)
+            "#attributeName": getFamilyDBField("name")
         };
         expressionAttributeValues = {
             ":_id": userID,
@@ -828,6 +828,7 @@ const checkTextMatch = (dbText, utteredText) => {
                     resolve(true);                    
                 else {
                     applySynonymCheck(utteredSentenceKeywords, dbSentenceKeywords).then(sIndex => {
+                        console.log(`Database: ${dbText} Utterance: ${utteredText}`);
                         console.log("Similarity Index with Synonyms: " + sIndex.toString());
                         if(sIndex > 80)
                             resolve(true);
